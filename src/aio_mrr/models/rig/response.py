@@ -4,9 +4,9 @@ This module contains models for responses from the Rig API.
 """
 
 from typing import Any
+from pydantic import Field, field_validator
 
 from aio_mrr.models.base import BaseMRRModel
-from pydantic import Field, field_validator
 
 
 class RigPriceInfo(BaseMRRModel):

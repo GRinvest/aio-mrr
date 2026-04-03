@@ -7,9 +7,9 @@ This module contains models for responses from the Info API:
 """
 
 from typing import Any
+from pydantic import field_validator
 
 from aio_mrr.models.base import BaseMRRModel
-from pydantic import field_validator
 
 
 def _parse_float_or_none(value: Any) -> float | None:
