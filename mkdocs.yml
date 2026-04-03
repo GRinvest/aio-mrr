@@ -1,0 +1,73 @@
+site_name: aio-mrr Documentation
+site_description: Асинхронная библиотека для MiningRigRentals API v2 by GRinvest
+site_author: GRinvest / SibNeuroTech
+repo_name: GRinvest/aio-mrr
+repo_url: https://github.com/GRinvest/aio-mrr
+
+theme:
+  name: material
+  language: ru
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Переключить на тёмную тему
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Переключить на светлую тему
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search:
+      lang: ru
+
+nav:
+  - Главная: index.md
+  - Начало работы:
+    - Установка и аутентификация: authentication.md
+    - Обработка ошибок: error-handling.md
+    - Модели данных: models.md
+  - Справочник API:
+    - Аккаунт и профили: api-reference/account.md
+    - Риги: api-reference/rigs.md
+    - Аренды: api-reference/rentals.md
+    - Группы ригов: api-reference/rig-groups.md
+    - Информация: api-reference/info.md
+    - Ценообразование: api-reference/pricing.md
+  - Примеры:
+    - Быстрый старт: https://github.com/GRinvest/aio-mrr/blob/main/examples/01_quickstart.py
+    - Все примеры: https://github.com/GRinvest/aio-mrr/tree/main/examples/
