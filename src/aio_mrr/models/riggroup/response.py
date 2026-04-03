@@ -1,27 +1,27 @@
-"""Response модели для RigGroup API.
+"""Response models for RigGroup API.
 
-Этот модуль содержит модели для ответов RigGroup API:
-- RigGroupInfo — информация о группе rig'ов
-- RigGroupList — список групп rig'ов
+This module contains models for responses from the RigGroup API:
+- RigGroupInfo — rig group information
+- RigGroupList — list of rig groups
 """
 
 from aio_mrr.models.base import BaseMRRModel
 
 
 class RigGroupInfo(BaseMRRModel):
-    """Информация о группе rig'ов.
+    """Rig group information.
 
-    Используется для ответов:
-    - GET /riggroup (в списке)
-    - GET /riggroup/{id} (одна группа)
+    Used for responses:
+    - GET /riggroup (in list)
+    - GET /riggroup/{id} (single group)
 
     Attributes:
-        id: Идентификатор группы.
-        name: Название группы.
-        enabled: Флаг включения группы.
-        rental_limit: Лимит активных аренд.
-        rigs: Список идентификаторов rig'ов в группе.
-        algo: Алгоритм майнинга группы (опционально).
+        id: Group identifier.
+        name: Group name.
+        enabled: Group enabled flag.
+        rental_limit: Maximum active rentals.
+        rigs: List of rig IDs in the group.
+        algo: Mining algorithm of the group (optional).
     """
 
     id: str
@@ -33,12 +33,12 @@ class RigGroupInfo(BaseMRRModel):
 
 
 class RigGroupList(BaseMRRModel):
-    """Список групп rig'ов.
+    """List of rig groups.
 
-    Ответ для GET /riggroup.
+    Response for GET /riggroup.
 
     Attributes:
-        groups: Список информации о группах rig'ов.
+        groups: List of rig group information.
     """
 
     groups: list[RigGroupInfo]

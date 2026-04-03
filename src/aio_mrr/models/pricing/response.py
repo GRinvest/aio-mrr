@@ -1,9 +1,9 @@
-"""Response модели для Pricing API.
+"""Response models for Pricing API.
 
-Этот модуль содержит модели для ответов от Pricing API:
-- ConversionRates — курсы конвертации валют относительно BTC
-- MarketRates — рыночные ставки по алгоритмам в разных валютах
-- PricingInfo — общий ответ для GET /pricing
+This module contains models for responses from the Pricing API:
+- ConversionRates — currency conversion rates relative to BTC
+- MarketRates — market rates for algorithms in different currencies
+- PricingInfo — general response for GET /pricing
 """
 
 from __future__ import annotations
@@ -12,15 +12,15 @@ from aio_mrr.models.base import BaseMRRModel
 
 
 class ConversionRates(BaseMRRModel):
-    """Курсы конвертации валют относительно BTC.
+    """Currency conversion rates relative to BTC.
 
-    Используется в ответе GET /pricing.
+    Used in GET /pricing response.
 
     Attributes:
-        LTC: Курс конвертации Litecoin в BTC.
-        ETH: Курс конвертации Ethereum в BTC.
-        BCH: Курс конвертации Bitcoin Cash в BTC.
-        DOGE: Курс конвертации Dogecoin в BTC.
+        LTC: Litecoin to BTC conversion rate.
+        ETH: Ethereum to BTC conversion rate.
+        BCH: Bitcoin Cash to BTC conversion rate.
+        DOGE: Dogecoin to BTC conversion rate.
     """
 
     LTC: str
@@ -30,14 +30,14 @@ class ConversionRates(BaseMRRModel):
 
 
 class MarketRate(BaseMRRModel):
-    """Рыночная ставка для одного алгоритма в разных валютах.
+    """Market rate for a single algorithm across different currencies.
 
     Attributes:
-        BTC: Цена в BTC.
-        LTC: Цена в LTC.
-        ETH: Цена в ETH.
-        BCH: Цена в BCH.
-        DOGE: Цена в DOGE.
+        BTC: Price in BTC.
+        LTC: Price in LTC.
+        ETH: Price in ETH.
+        BCH: Price in BCH.
+        DOGE: Price in DOGE.
     """
 
     BTC: str
@@ -48,21 +48,21 @@ class MarketRate(BaseMRRModel):
 
 
 class MarketRates(BaseMRRModel):
-    """Рыночные ставки по алгоритмам майнинга.
+    """Market rates for mining algorithms.
 
-    Используется в ответе GET /pricing. Каждая валюта (BTC, LTC, ETH, BCH, DOGE)
-    имеет свою ставку для каждого алгоритма.
+    Used in GET /pricing response. Each currency (BTC, LTC, ETH, BCH, DOGE)
+    has its own rate for each algorithm.
 
     Attributes:
-        allium: Рыночные ставки для алгоритма Allium.
-        argon2dchukwa: Рыночные ставки для алгоритма Argon2/Chukwa.
-        autolykosv2: Рыночные ставки для алгоритма Autolykos v2 (ERGO).
-        kawpow: Рыночные ставки для алгоритма KawPOW (RVN).
-        kheavyhash: Рыночные ставки для алгоритма kHeavyHash (Kaspa).
-        randomx: Рыночные ставки для алгоритма RandomX (XMR).
-        scrypt: Рыночные ставки для алгоритма Scrypt.
-        sha256: Рыночные ставки для алгоритма SHA256.
-        x11: Рыночные ставки для алгоритма X11.
+        allium: Market rates for Allium algorithm.
+        argon2dchukwa: Market rates for Argon2/Chukwa algorithm.
+        autolykosv2: Market rates for Autolykos v2 (ERGO) algorithm.
+        kawpow: Market rates for KawPOW (RVN) algorithm.
+        kheavyhash: Market rates for kHeavyHash (Kaspa) algorithm.
+        randomx: Market rates for RandomX (XMR) algorithm.
+        scrypt: Market rates for Scrypt algorithm.
+        sha256: Market rates for SHA256 algorithm.
+        x11: Market rates for X11 algorithm.
     """
 
     allium: MarketRate
@@ -77,13 +77,13 @@ class MarketRates(BaseMRRModel):
 
 
 class PricingInfo(BaseMRRModel):
-    """Информация о ценообразовании для GET /pricing.
+    """Pricing information for GET /pricing.
 
-    Ответ от API MiningRigRentals для получения рыночных ставок ценообразования.
+    Response from MiningRigRentals API for obtaining market pricing rates.
 
     Attributes:
-        conversion_rates: Курсы конвертации валют относительно BTC.
-        market_rates: Рыночные ставки по алгоритмам в разных валютах.
+        conversion_rates: Currency conversion rates relative to BTC.
+        market_rates: Market rates for algorithms in different currencies.
     """
 
     conversion_rates: ConversionRates

@@ -1,7 +1,10 @@
-"""Secret masking module for loguru.
+"""Masks secrets in text logs.
 
-This module provides the SecretMasker class for masking sensitive information
-in log messages, such as API keys, signatures, and nonces.
+Uses regular expressions to detect and mask:
+- API keys (x-api-key, api_key, apikey)
+- API signatures (x-api-sign, api_sign, apisign)
+- Nonce (x-api-nonce, api_nonce, apinode)
+- HMAC signatures and secrets
 """
 
 from __future__ import annotations
@@ -10,23 +13,23 @@ from typing import Final
 
 
 class SecretMasker:
-    """Маскирует секреты в текстовых логах.
+    """Masks secrets in text logs.
 
-    Использует регулярные выражения для обнаружения и маскирования:
-    - API-ключей (x-api-key, api_key, apikey)
-    - API-подписей (x-api-sign, api_sign, apisign)
+    Uses regular expressions to detect and mask:
+    - API keys (x-api-key, api_key, apikey)
+    - API signatures (x-api-sign, api_sign, apisign)
     - Nonce (x-api-nonce, api_nonce, apinode)
-    - HMAC-подписей и секретов
+    - HMAC signatures and secrets
     """
 
-    # Паттерны для маскирования секретов
+    # Patterns for masking secrets
     SECRET_PATTERNS: Final[list[re.Pattern[str]]] = [
-        # API ключи: x-api-key: value, api_key=value, "x-api-key": "value" (JSON)
+        # API keys: x-api-key: value, api_key=value, "x-api-key": "value" (JSON)
         re.compile(
             r'(?i)["\']?(x-api-key|api_key|apikey|api-key)["\']?\s*[:=]\s*["\']?([a-zA-Z0-9_-]+)["\']?',
             re.IGNORECASE,
         ),
-        # API подписи: x-api-sign: value, api_sign=value, "x-api-sign": "value" (JSON)
+        # API signatures: x-api-sign: value, api_sign=value, "x-api-sign": "value" (JSON)
         re.compile(
             r'(?i)["\']?(x-api-sign|api_sign|apisign|api-sign)["\']?\s*[:=]\s*["\']?([a-fA-F0-9]+)["\']?',
             re.IGNORECASE,
@@ -36,28 +39,28 @@ class SecretMasker:
             r'(?i)["\']?(x-api-nonce|api_nonce|apinode|api-nonce)["\']?\s*[:=]\s*["\']?(\d+)["\']?',
             re.IGNORECASE,
         ),
-        # HMAC подписи (64 hex символов - SHA256)
+        # HMAC signatures (64 hex characters - SHA256)
         re.compile(r"\b([a-fA-F0-9]{64})\b"),
-        # HMAC подписи (40 hex символов - SHA1)
+        # HMAC signatures (40 hex characters - SHA1)
         re.compile(r"\b([a-fA-F0-9]{40})\b"),
-        # Секреты в формате "secret": "value"
+        # Secrets in format "secret": "value"
         re.compile(
             r'(?i)["\']?(secret|api_secret|apisecret)["\']?\s*[:=]\s*["\']?([^,"\']+)["\']?',
             re.IGNORECASE,
         ),
     ]
 
-    # Замена для маскирования
+    # Replacement for masking
     MASK_REPLACEMENT: Final[str] = "***"
 
     def mask(self, text: str) -> str:
-        """Маскирует секреты в тексте.
+        """Masks secrets in text.
 
         Args:
-            text: Текст для маскирования.
+            text: Text to mask.
 
         Returns:
-            Текст с замаскированными секретами.
+            Text with masked secrets.
 
         Examples:
             >>> masker = SecretMasker()
@@ -76,19 +79,19 @@ class SecretMasker:
         return masked_text
 
     def _replace_match(self, match: re.Match[str]) -> str:
-        """Заменяет совпадение на маскированное значение.
+        """Replaces a match with a masked value.
 
         Args:
-            match: Объект совпадения регулярного выражения.
+            match: Regular expression match object.
 
         Returns:
-            Замаскированная строка с сохранением структуры.
+            Masked string with preserved structure.
         """
-        # Проверяем, есть ли в совпадении секретное значение (группа 2 или 3)
+        # Check if there is a secret value in the match (group 2 or 3)
         if match.lastindex and match.lastindex >= 2:
-            # Сохраняем ключ/название и разделитель, заменяем значение
+            # Preserve key/name and separator, replace value
             key_part = match.group(1) if match.group(1) else ""
-            # Находим разделитель ( : или = ) в оригинальном совпадении
+            # Find separator ( : or = ) in the original match
             full_match = match.group(0)
             sep_match = re.search(r"[:=]\s*", full_match)
             if sep_match:
@@ -96,5 +99,5 @@ class SecretMasker:
                 return f"{key_part}{separator}{self.MASK_REPLACEMENT}"
             return f"{key_part}{self.MASK_REPLACEMENT}"
 
-        # Для простых hex-паттернов заменяем всё совпадение
+        # For simple hex patterns, replace the entire match
         return self.MASK_REPLACEMENT

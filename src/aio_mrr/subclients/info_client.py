@@ -1,6 +1,6 @@
-"""Info Client для взаимодействия с Info API.
+"""Info Client for interacting with the Info API.
 
-Этот модуль предоставляет InfoClient для работы с Info API endpoints:
+This module provides InfoClient for working with Info API endpoints:
 - GET /info/servers
 - GET /info/algos
 - GET /info/algos/{name}
@@ -17,14 +17,14 @@ from aio_mrr.subclients.base import BaseSubClient
 
 
 class InfoClient(BaseSubClient):
-    """Client для работы с Info API.
+    """Client for working with the Info API.
 
-    Предоставляет методы для получения информации о системе:
-    - список серверов
-    - информацию об алгоритмах майнинга
-    - список доступных валют
+    Provides methods for retrieving system information:
+    - list of servers
+    - mining algorithm information
+    - list of available currencies
 
-    Пример использования:
+    Usage example:
         >>> async with MRRClient(api_key="key", api_secret="secret") as client:
         ...     response = await client.info_client.get_servers()
         ...     if response.success:
@@ -32,26 +32,26 @@ class InfoClient(BaseSubClient):
     """
 
     def __init__(self, http_client: HTTPClient) -> None:
-        """Инициализирует InfoClient.
+        """Initializes InfoClient.
 
         Args:
-            http_client: Экземпляр HTTPClient для выполнения запросов.
+            http_client: HTTPClient instance for performing requests.
         """
         super().__init__(http_client)
 
     async def get_servers(self) -> MRRResponse[ServersList]:
-        """Получает список серверов MRR.
+        """Retrieves the list of MRR servers.
 
-        Возвращает информацию о всех доступных серверах MiningRigRentals,
-        включая их идентификаторы, имена, регионы и порты.
+        Returns information about all available MiningRigRentals servers,
+        including their identifiers, names, regions, and ports.
 
-        > ⚠️ Поля port и ethereum_port устарели. Используйте /rig/port
-        для получения актуальной информации о портах.
+        > Note: The port and ethereum_port fields are deprecated. Use /rig/port
+        to get up-to-date port information.
 
         Returns:
-            MRRResponse[ServersList] — ответ с списком серверов:
-            - При успехе: MRRResponse(success=True, data=ServersList)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[ServersList] — response with server list:
+            - On success: MRRResponse(success=True, data=ServersList)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await info_client.get_servers()
@@ -76,19 +76,19 @@ class InfoClient(BaseSubClient):
         return result
 
     async def get_algos(self, currency: str | None = None) -> MRRResponse[list[AlgoInfo]]:
-        """Получает список всех алгоритмов майнинга.
+        """Retrieves the list of all mining algorithms.
 
-        Возвращает информацию обо всех доступных алгоритмах майнинга,
-        включая рекомендуемые цены, статистику хешрейта и текущие цены.
+        Returns information about all available mining algorithms,
+        including suggested prices, hashrate statistics, and current prices.
 
         Args:
-            currency: Валюта для цен (BTC, LTC, ETH, DOGE, BCH).
-                     По умолчанию BTC.
+            currency: Currency for prices (BTC, LTC, ETH, DOGE, BCH).
+                     Default BTC.
 
         Returns:
-            MRRResponse[list[AlgoInfo]] — ответ со списком алгоритмов:
-            - При успехе: MRRResponse(success=True, data=[AlgoInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[AlgoInfo]] — response with algorithm list:
+            - On success: MRRResponse(success=True, data=[AlgoInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await info_client.get_algos(currency="BTC")
@@ -118,20 +118,20 @@ class InfoClient(BaseSubClient):
         return result
 
     async def get_algo(self, name: str, currency: str | None = None) -> MRRResponse[AlgoInfo]:
-        """Получает информацию о конкретном алгоритме майнинга.
+        """Retrieves information about a specific mining algorithm.
 
-        Возвращает детальную информацию об одном алгоритме, включая
-        рекомендуемые цены, статистику хешрейта и текущие рыночные цены.
+        Returns detailed information about a single algorithm, including
+        suggested prices, hashrate statistics, and current market prices.
 
         Args:
-            name: Название алгоритма (например, "scrypt", "sha256", "x11").
-            currency: Валюта для цен (BTC, LTC, ETH, DOGE, BCH).
-                     По умолчанию BTC.
+            name: Algorithm name (e.g., "scrypt", "sha256", "x11").
+            currency: Currency for prices (BTC, LTC, ETH, DOGE, BCH).
+                     Default BTC.
 
         Returns:
-            MRRResponse[AlgoInfo] — ответ с информацией об алгоритме:
-            - При успехе: MRRResponse(success=True, data=AlgoInfo)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[AlgoInfo] — response with algorithm information:
+            - On success: MRRResponse(success=True, data=AlgoInfo)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await info_client.get_algo(name="scrypt", currency="BTC")
@@ -161,18 +161,18 @@ class InfoClient(BaseSubClient):
         return result
 
     async def get_currencies(self) -> MRRResponse[list[CurrencyInfo]]:
-        """Получает список доступных валют для платежей.
+        """Retrieves the list of available currencies for payments.
 
-        Возвращает информацию о всех валютах, которые можно использовать
-        для оплаты аренды ригов. Каждая валюта имеет статус доступности
-        и комиссию за вывод средств.
+        Returns information about all currencies that can be used
+        to pay for rig rentals. Each currency has an availability status
+        and a withdrawal fee.
 
-        > ℹ️ Комиссия txfee может меняться каждые 15 минут.
+        > Note: The txfee may change every 15 minutes.
 
         Returns:
-            MRRResponse[list[CurrencyInfo]] — ответ со списком валют:
-            - При успехе: MRRResponse(success=True, data=[CurrencyInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[CurrencyInfo]] — response with currency list:
+            - On success: MRRResponse(success=True, data=[CurrencyInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await info_client.get_currencies()
@@ -184,7 +184,7 @@ class InfoClient(BaseSubClient):
         result = await self._http.request(method="GET", endpoint=endpoint)
 
         if result.success and result.data is not None:
-            # Ответ имеет структуру {"currencies": [...]}
+            # Response has structure {"currencies": [...]}
             currencies_data: dict[str, list[dict[str, Any]]] = result.data
             currencies_list = currencies_data.get("currencies", [])
             currencies = [CurrencyInfo.model_validate(c) for c in currencies_list]

@@ -1,6 +1,6 @@
-"""Модели для Pricing API.
+"""Models for Pricing API.
 
-Этот пакет содержит модели для валидации request/response данных Pricing API.
+This package contains models for validating request/response data of the Pricing API.
 """
 
 from aio_mrr.models.pricing.response import (

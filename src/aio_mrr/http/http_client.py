@@ -1,14 +1,14 @@
-"""HTTP Client для aio-mrr библиотеки.
+"""HTTP Client for aio-mrr library.
 
-Этот модуль предоставляет центральный HTTP-клиент с функциональностью:
-- Retry логика через tenacity (для 5xx, 429, connection errors)
-- Timeout конфигурация (connect и read)
-- Аутентификация через AuthSigner
-- Логирование через loguru
-- НИКОГДА не бросает исключений наружу — все ошибки возвращаются как MRRResponse(success=False)
+This module provides the central HTTP client with functionality:
+- Retry logic via tenacity (for 5xx, 429, connection errors)
+- Timeout configuration (connect and read)
+- Authentication via AuthSigner
+- Logging via loguru
+- NEVER raises exceptions outward — all errors are returned as MRRResponse(success=False)
 
-Автор: GRinvest / SibNeuroTech
-Лицензия: MIT
+Author: GRinvest / SibNeuroTech
+License: MIT
 """
 
 from __future__ import annotations
@@ -33,30 +33,30 @@ from aio_mrr.http.session import AioHTTPSession
 from aio_mrr.logging.config import get_logger
 from aio_mrr.models.base import MRRResponse, MRRResponseError
 
-# Retry-логгер (секреты автоматически маскируются через SecretMasker)
+# Retry logger (secrets are automatically masked via SecretMasker)
 _retry_logger = get_logger("http_client_retry")
 
 
 def _is_retryable_result(response: aiohttp.ClientResponse) -> bool:
-    """Определяет, нужно ли ретраить по HTTP статусу.
+    """Determines whether to retry based on HTTP status.
 
     Args:
-        response: aiohttp ClientResponse объект.
+        response: aiohttp ClientResponse object.
 
     Returns:
-        True если статус требует retry (429, 500, 502, 503, 504).
+        True if status requires retry (429, 500, 502, 503, 504).
     """
     return response.status in {429, 500, 502, 503, 504}
 
 
 def _get_retry_params(status: int | None) -> dict[str, Any]:
-    """Возвращает параметры retry в зависимости от статуса.
+    """Returns retry parameters depending on status.
 
     Args:
-        status: HTTP статус код или None для connection errors.
+        status: HTTP status code or None for connection errors.
 
     Returns:
-        Словарь с параметрами stop и wait для tenacity.
+        Dictionary with stop and wait parameters for tenacity.
     """
     if status == 429:
         return {
@@ -70,32 +70,32 @@ def _get_retry_params(status: int | None) -> dict[str, Any]:
 
 
 def _log_retry_attempt(retry_state: Any) -> None:
-    """Логгирует попытку retry.
+    """Logs a retry attempt.
 
     Args:
-        retry_state: Состояние retry от tenacity.
+        retry_state: Retry state from tenacity.
     """
     _retry_logger.debug(f"Retry attempt: {retry_state.attempt_number} (will retry {retry_state.upcoming_sleep:.2f}s)")
 
 
 class HTTPClient:
-    """Центральный HTTP-клиент с retry, timeout, auth, логированием.
+    """Central HTTP client with retry, timeout, auth, and logging.
 
-    Этот класс предоставляет низкоуровневый HTTP-клиент для взаимодействия
-    с MiningRigRentals API v2. Все сетевые ошибки, таймауты и HTTP ошибки
-    обрабатываются внутри — метод request() НИКОГДА не бросает исключений.
+    This class provides a low-level HTTP client for interacting
+    with MiningRigRentals API v2. All network errors, timeouts, and HTTP errors
+    are handled internally — the request() method NEVER raises exceptions.
 
-    Retry стратегия:
-    - 500, 502, 503, 504: 3 попытки, exponential backoff 1-8с + jitter
-    - 429 (Rate Limit): 5 попыток, exponential backoff 5-60с + jitter
-    - Connection errors: 3 попытки, exponential backoff 1-8с + jitter
+    Retry strategy:
+    - 500, 502, 503, 504: 3 attempts, exponential backoff 1-8s + jitter
+    - 429 (Rate Limit): 5 attempts, exponential backoff 5-60s + jitter
+    - Connection errors: 3 attempts, exponential backoff 1-8s + jitter
 
     Attributes:
-        api_key: API ключ MRR (хранится только в памяти).
-        api_secret: API секрет MRR (хранится только в памяти).
-        connect_timeout: Таймаут подключения в секундах (дефолт: 30.0).
-        read_timeout: Таймаут чтения в секундах (дефолт: 60.0).
-        max_retries: Максимальное количество попыток retry (дефолт: 3).
+        api_key: MRR API key (stored in memory only).
+        api_secret: MRR API secret (stored in memory only).
+        connect_timeout: Connection timeout in seconds (default: 30.0).
+        read_timeout: Read timeout in seconds (default: 60.0).
+        max_retries: Maximum number of retry attempts (default: 3).
     """
 
     BASE_URL: str = "https://www.miningrigrentals.com/api/v2"
@@ -108,14 +108,14 @@ class HTTPClient:
         read_timeout: float = 60.0,
         max_retries: int = 3,
     ) -> None:
-        """Инициализирует HTTPClient.
+        """Initializes HTTPClient.
 
         Args:
-            api_key: API ключ MRR.
-            api_secret: API секрет MRR.
-            connect_timeout: Таймаут подключения в секундах.
-            read_timeout: Таймаут чтения в секундах.
-            max_retries: Максимальное количество попыток retry.
+            api_key: MRR API key.
+            api_secret: MRR API secret.
+            connect_timeout: Connection timeout in seconds.
+            read_timeout: Read timeout in seconds.
+            max_retries: Maximum number of retry attempts.
         """
         self._api_key = api_key
         self._api_secret = api_secret
@@ -134,22 +134,22 @@ class HTTPClient:
         params: dict[str, Any] | None = None,
         body: dict[str, Any] | None = None,
     ) -> MRRResponse[Any]:
-        """Выполняет HTTP запрос с retry, timeout, auth.
+        """Performs an HTTP request with retry, timeout, and auth.
 
-        Метод выполняет HTTP запрос к MRR API с автоматическим retry,
-        timeout, аутентификацией и логированием. НИКОГДА не бросает
-        исключений наружу — все ошибки возвращаются как MRRResponse(success=False).
+        The method performs an HTTP request to MRR API with automatic retry,
+        timeout, authentication, and logging. NEVER raises exceptions
+        outward — all errors are returned as MRRResponse(success=False).
 
         Args:
-            method: HTTP метод (GET, PUT, POST, DELETE).
-            endpoint: API endpoint (без базового URL, например "/account/balance").
-            params: Query параметры (опционально).
-            body: Тело запроса для JSON (опционально).
+            method: HTTP method (GET, PUT, POST, DELETE).
+            endpoint: API endpoint (without base URL, e.g. "/account/balance").
+            params: Query parameters (optional).
+            body: Request body for JSON (optional).
 
         Returns:
-            MRRResponse[Any] — универсальный ответ:
-            - При успехе: MRRResponse(success=True, data=...)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[Any] — universal response:
+            - On success: MRRResponse(success=True, data=...)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> client = HTTPClient(api_key="key", api_secret="secret")
@@ -163,16 +163,16 @@ class HTTPClient:
 
         self._logger.debug(f"{method} {full_url}")
 
-        # Таймауты
+        # Timeouts
         timeout = aiohttp.ClientTimeout(
             total=self._read_timeout,
             connect=self._connect_timeout,
         )
 
-        # Retry конфигурация - определяем ПЕРЕД созданием стратегии retry
-        retry_params = _get_retry_params(None)  # По умолчанию для connection errors
+        # Retry configuration - determined BEFORE creating retry strategy
+        retry_params = _get_retry_params(None)  # Default for connection errors
 
-        # Создаём retry стратегию динамически
+        # Create retry strategy dynamically
         retry_decorator = retry(
             stop=retry_params["stop"],
             wait=retry_params["wait"],
@@ -187,7 +187,7 @@ class HTTPClient:
         try:
             session = self._session_manager.get_session()
 
-            # Оборачиваем _do_request в retry декоратор
+            # Wrap _do_request in retry decorator
             @retry_decorator
             async def _do_request_with_retry() -> aiohttp.ClientResponse:
                 return await self._do_request(
@@ -200,14 +200,14 @@ class HTTPClient:
                     session=session,
                 )
 
-            # Выполняем запрос c retry
+            # Execute request with retry
             response = await _do_request_with_retry()
 
-            # Всегда возвращаем MRRResponse
+            # Always return MRRResponse
             return await self._handle_response(response)
 
         except Exception as e:
-            # Фолбэк на случай непредвиденных ошибок (никогда не должно происходить)
+            # Fallback for unexpected errors (should never happen)
             self._logger.error(f"Unexpected error in request: {e}")
             return MRRResponse(
                 success=False,
@@ -220,13 +220,13 @@ class HTTPClient:
             )
 
     def _convert_params(self, params: dict[str, Any] | None) -> dict[str, Any] | None:
-        """Конвертирует булевы значения в строки для aiohttp.
+        """Converts boolean values to strings for aiohttp.
 
         Args:
-            params: Словарь с параметрами запроса.
+            params: Dictionary with request parameters.
 
         Returns:
-            Словарь с булевыми значениями, конвертированными в строки 'true'/'false'.
+            Dictionary with boolean values converted to 'true'/'false' strings.
         """
         if params is None:
             return None
@@ -249,32 +249,32 @@ class HTTPClient:
         timeout: aiohttp.ClientTimeout,
         session: aiohttp.ClientSession,
     ) -> aiohttp.ClientResponse:
-        """Выполняет один HTTP запрос.
+        """Performs a single HTTP request.
 
         Args:
-            method: HTTP метод.
-            url: Полный URL запроса.
-            params: Query параметры.
-            body: Тело запроса.
-            timeout: Таймауты запроса.
+            method: HTTP method.
+            url: Full request URL.
+            params: Query parameters.
+            body: Request body.
+            timeout: Request timeouts.
             session: aiohttp ClientSession.
 
         Returns:
-            aiohttp.ClientResponse — для проверки статуса и retry логики.
+            aiohttp.ClientResponse — for status checking and retry logic.
         """
-        # Генерируем заголовки аутентификации (подписываем только endpoint без base URL)
+        # Generate authentication headers (sign only endpoint without base URL)
         auth_headers = await self._auth_signer.get_auth_headers(endpoint=endpoint)
 
-        # Объединяем заголовки
+        # Merge headers
         headers = {
             "Content-Type": "application/json",
             **auth_headers,
         }
 
-        # Конвертируем булевы значения в строки для aiohttp
+        # Convert boolean values to strings for aiohttp
         converted_params = self._convert_params(params)
 
-        # Выполняем запрос
+        # Execute request
         response = await session.request(
             method=method,
             url=url,
@@ -284,24 +284,24 @@ class HTTPClient:
             timeout=timeout,
         )
 
-        # Логируем ответ (секреты автоматически маскируются)
+        # Log response (secrets are automatically masked)
         self._logger.debug(f"{method} {url} -> {response.status}")
 
         return response
 
     async def _handle_response(self, response: aiohttp.ClientResponse) -> MRRResponse[Any]:
-        """Обрабатывает HTTP ответ и возвращает MRRResponse.
+        """Processes HTTP response and returns MRRResponse.
 
         Args:
             response: aiohttp ClientResponse.
 
         Returns:
-            MRRResponse[Any] — универсальный ответ API.
+            MRRResponse[Any] — universal API response.
         """
-        # Читаем тело ответа
+        # Read response body
         response_text = await response.text()
 
-        # Если статус не 2xx, возвращаем ошибку
+        # If status is not 2xx, return error
         if response.status >= 400:
             return MRRResponse(
                 success=False,
@@ -314,7 +314,7 @@ class HTTPClient:
                 ),
             )
 
-        # Пытаемся распарсить JSON
+        # Attempt to parse JSON
         try:
             json_data = json.loads(response_text)
             return parse_response(
@@ -334,9 +334,9 @@ class HTTPClient:
             )
 
     async def close(self) -> None:
-        """Закрывает HTTP session.
+        """Closes the HTTP session.
 
-        Должен вызываться при завершении работы клиента.
+        Should be called when the client is shutting down.
         """
         await self._session_manager.__aexit__(None, None, None)
 

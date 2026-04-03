@@ -1,11 +1,11 @@
-"""Base sub-client для aio-mrr библиотеки.
+"""Base sub-client for the aio-mrr library.
 
-Этот модуль предоставляет базовый класс для всех sub-clients с dependency injection
-HTTPClient. Sub-clients наследуются от BaseSubClient и получают HTTP-клиент через
-конструктор, делегируя ему управление сессией, retry, таймаутами и аутентификацией.
+This module provides the base class for all sub-clients with HTTPClient
+dependency injection. Sub-clients inherit from BaseSubClient and receive the HTTP client
+through the constructor, delegating session management, retry, timeouts, and authentication to it.
 
-Автор: GRinvest / SibNeuroTech
-Лицензия: MIT
+Author: GRinvest / SibNeuroTech
+License: MIT
 """
 
 from __future__ import annotations
@@ -14,17 +14,17 @@ from aio_mrr.http.http_client import HTTPClient
 
 
 class BaseSubClient:
-    """Базовый класс для всех sub-clients.
+    """Base class for all sub-clients.
 
-    Этот класс обеспечивает общую структуру для всех sub-clients библиотеки,
-    получая HTTPClient через dependency injection. Все подклассы должны
-    использовать self._http для выполнения HTTP-запросов.
+    This class provides the common structure for all library sub-clients,
+    receiving HTTPClient via dependency injection. All subclasses should
+    use self._http to perform HTTP requests.
     """
 
     def __init__(self, http_client: HTTPClient) -> None:
-        """Инициализирует базовый sub-client.
+        """Initializes the base sub-client.
 
         Args:
-            http_client: Экземпляр HTTPClient для выполнения запросов.
+            http_client: HTTPClient instance for performing requests.
         """
         self._http: HTTPClient = http_client

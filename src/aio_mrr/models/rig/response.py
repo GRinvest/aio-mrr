@@ -1,24 +1,23 @@
-"""Response модели для Rig API.
+"""Response models for Rig API.
 
-Этот модуль содержит модели для ответов от Rig API.
+This module contains models for responses from the Rig API.
 """
 
 from typing import Any
 
-from pydantic import Field, field_validator
-
 from aio_mrr.models.base import BaseMRRModel
+from pydantic import Field, field_validator
 
 
 class RigPriceInfo(BaseMRRModel):
-    """Информация о цене rig.
+    """Rig price information.
 
     Attributes:
-        enabled: Включено ли ценообразование.
-        price: Цена rig в день.
-        autoprice: Включено ли автоценообразование.
-        minimum: Минимальная цена автоценообразователя.
-        modifier: Процент +/- для автоценообразования.
+        enabled: Whether pricing is enabled.
+        price: Rig price per day.
+        autoprice: Whether auto-pricing is enabled.
+        minimum: Minimum auto-pricer price.
+        modifier: Percentage +/- for auto-pricing.
     """
 
     enabled: bool | None = None
@@ -39,11 +38,11 @@ class RigPriceInfo(BaseMRRModel):
 
 
 class RigHashInfo(BaseMRRModel):
-    """Информация о хешрэйте rig.
+    """Rig hashrate information.
 
     Attributes:
-        hash: Хешрейт.
-        type: Тип хеша (hash,kh,mh,gh,th,ph,eh).
+        hash: Hashrate.
+        type: Hash type (hash,kh,mh,gh,th,ph,eh).
     """
 
     hash: float | None = None
@@ -51,34 +50,34 @@ class RigHashInfo(BaseMRRModel):
 
 
 class RigInfo(BaseMRRModel):
-    """Информация о rig.
+    """Rig information.
 
-    Используется для ответов:
+    Used for responses:
     - GET /rig
     - GET /rig/mine
     - GET /rig/{ids}
 
     Attributes:
-        id: Идентификатор rig.
-        name: Название rig.
-        description: Описание rig.
-        server: Имя сервера.
-        status: Статус rig (enabled/disabled).
-        price: Информация о цене по валютам.
-        price_type: Тип хеша для цены.
-        minhours: Минимальное количество часов.
-        maxhours: Максимальное количество часов.
-        extensions: Разрешено ли продление аренды.
-        hash: Информация о хешрэйте.
-        suggested_diff: Рекомендуемая сложность.
-        ndevices: Количество устройств (workers).
-        type: Алгоритм (sha256, scrypt и т.д.).
-        region: Регион.
-        online: Статус онлайн.
-        rented: Статус аренды.
-        last_hashrate: Последний хешрейт.
-        rpi: RPI рейтинг (0-100).
-        owner: Владелец rig.
+        id: Rig identifier.
+        name: Rig name.
+        description: Rig description.
+        server: Server name.
+        status: Rig status (enabled/disabled).
+        price: Price information by currency.
+        price_type: Hash type for price.
+        minhours: Minimum hours.
+        maxhours: Maximum hours.
+        extensions: Whether rental extension is allowed.
+        hash: Hashrate information.
+        suggested_diff: Suggested difficulty.
+        ndevices: Number of devices (workers).
+        type: Algorithm (sha256, scrypt, etc.).
+        region: Region.
+        online: Online status.
+        rented: Rental status.
+        last_hashrate: Last hashrate.
+        rpi: RPI rating (0-100).
+        owner: Rig owner.
     """
 
     id: int
@@ -114,28 +113,28 @@ class RigInfo(BaseMRRModel):
 
 
 class RigList(BaseMRRModel):
-    """Список rig'ов.
+    """List of rigs.
 
-    Ответ для GET /rig, GET /rig/mine, GET /rig/{ids}.
-    API возвращает список напрямую, но эта модель для типизации.
+    Response for GET /rig, GET /rig/mine, GET /rig/{ids}.
+    API returns the list directly, but this model is for typing.
 
     Attributes:
-        rigs: Список rig'ов.
+        rigs: List of rigs.
     """
 
-    rigs: list[RigInfo] = Field(..., description="Список rig'ов")
+    rigs: list[RigInfo] = Field(..., description="List of rigs")
 
 
 class RigPortInfo(BaseMRRModel):
-    """Информация о портах для rig.
+    """Port information for a rig.
 
-    Ответ для GET /rig/{ids}/port.
+    Response for GET /rig/{ids}/port.
 
     Attributes:
-        rigid: ID rig.
-        port: Прямой номер порта для подключения к серверу.
-        server: Имя сервера.
-        worker: Имя worker для подключения.
+        rigid: Rig ID.
+        port: Direct port number for server connection.
+        server: Server name.
+        worker: Worker name for connection.
     """
 
     rigid: str | None = None
@@ -145,14 +144,14 @@ class RigPortInfo(BaseMRRModel):
 
 
 class RigThreadDetail(BaseMRRModel):
-    """Детали одного thread'а.
+    """Details of a single thread.
 
     Attributes:
-        id: Идентификатор thread.
-        worker: Имя worker.
-        status: Статус thread.
-        hashrate: Текущий хешрейт.
-        last_share: Время последней работы.
+        id: Thread identifier.
+        worker: Worker name.
+        status: Thread status.
+        hashrate: Current hashrate.
+        last_share: Time of last share.
     """
 
     id: int | None = None
@@ -163,14 +162,14 @@ class RigThreadDetail(BaseMRRModel):
 
 
 class RigThreadInfo(BaseMRRModel):
-    """Информация о thread'ах для rig.
+    """Thread information for a rig.
 
-    Ответ для GET /rig/{ids}/threads — возвращает список rig-групп с threads.
+    Response for GET /rig/{ids}/threads — returns a list of rig groups with threads.
 
     Attributes:
-        rigid: ID rig.
-        access: Уровень доступа (owner/renter).
-        threads: Список деталей thread'ов.
+        rigid: Rig ID.
+        access: Access level (owner/renter).
+        threads: List of thread details.
     """
 
     rigid: str | None = None
@@ -179,13 +178,13 @@ class RigThreadInfo(BaseMRRModel):
 
 
 class RigGraphData(BaseMRRModel):
-    """Графические данные rig.
+    """Rig graph data.
 
-    Ответ для GET /rig/{ids}/graph.
+    Response for GET /rig/{ids}/graph.
 
     Attributes:
-        rigid: ID rig.
-        chartdata: Данные графика (time_start, time_end, timestamp_start, timestamp_end, bars).
+        rigid: Rig ID.
+        chartdata: Chart data (time_start, time_end, timestamp_start, timestamp_end, bars).
     """
 
     rigid: str | None = None

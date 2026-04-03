@@ -1,10 +1,10 @@
-"""Общие модели данных для библиотеки aio-mrr.
+"""Common data models for the aio-mrr library.
 
-Этот модуль содержит общие модели, которые используются в нескольких местах:
-- HashInfo: информация о хешрейте
-- PriceInfo: информация о цене
-- PoolInfo: информация о пуле
-- ServerInfo: информация о сервере
+This module contains common models used in multiple places:
+- HashInfo: hashrate information
+- PriceInfo: price information
+- PoolInfo: pool information
+- ServerInfo: server information
 """
 
 from __future__ import annotations
@@ -13,15 +13,15 @@ from .base import BaseMRRModel
 
 
 class HashInfo(BaseMRRModel):
-    """Информация о хешрейте.
+    """Hashrate information.
 
-    Используется для представления хешрейта в различных контекстах
-    (алгоритмы, rig, rental и т.д.).
+    Used to represent hashrate in various contexts
+    (algorithms, rig, rental, etc.).
 
     Attributes:
-        hash: Значение хешрейта.
-        unit: Единица измерения (например, "mh", "th").
-        nice: Человекочитаемое представление (например, "882.70G").
+        hash: Hashrate value.
+        unit: Unit of measurement (e.g., "mh", "th").
+        nice: Human-readable representation (e.g., "882.70G").
     """
 
     hash: float
@@ -30,14 +30,14 @@ class HashInfo(BaseMRRModel):
 
 
 class PriceInfo(BaseMRRModel):
-    """Информация о цене.
+    """Price information.
 
-    Используется для представления цены алгоритма или хешрейта.
+    Used to represent the price of an algorithm or hashrate.
 
     Attributes:
-        amount: Значение цены.
-        currency: Валюта цены (например, "BTC", "LTC", "ETH").
-        unit: Единица измерения цены (например, "mh*day", "th*day").
+        amount: Price value.
+        currency: Price currency (e.g., "BTC", "LTC", "ETH").
+        unit: Price unit of measurement (e.g., "mh*day", "th*day").
     """
 
     amount: str
@@ -46,19 +46,19 @@ class PriceInfo(BaseMRRModel):
 
 
 class PoolInfo(BaseMRRModel):
-    """Информация о пуле.
+    """Pool information.
 
-    Используется для представления информации о майнинг-пуле.
-    Может использоваться в контексте профиля, rig, rental.
+    Used to represent mining pool information.
+    Can be used in the context of profile, rig, rental.
 
     Attributes:
-        priority: Приоритет пула (0-4).
-        type: Тип алгоритма пула (например, "scrypt", "sha256").
-        host: Хост пула.
-        port: Порт пула.
-        user: Имя пользователя/worker.
-        pass_: Пароль worker.
-        status: Статус пула (опционально, может быть пустым).
+        priority: Pool priority (0-4).
+        type: Pool algorithm type (e.g., "scrypt", "sha256").
+        host: Pool host.
+        port: Pool port.
+        user: Username/worker name.
+        pass_: Worker password.
+        status: Pool status (optional, may be empty).
     """
 
     priority: int
@@ -71,16 +71,16 @@ class PoolInfo(BaseMRRModel):
 
 
 class ServerInfo(BaseMRRModel):
-    """Информация о сервере MRR.
+    """MRR server information.
 
-    Используется для представления информации о серверах MiningRigRentals.
+    Used to represent MiningRigRentals server information.
 
     Attributes:
-        id: Идентификатор сервера.
-        name: Название сервера (hostname).
-        region: Регион сервера (например, "us-central", "eu-ru").
-        port: Порт для подключения (опционально, устаревшее поле).
-        ethereum_port: Порт для Ethereum (опционально, устаревшее поле).
+        id: Server identifier.
+        name: Server name (hostname).
+        region: Server region (e.g., "us-central", "eu-ru").
+        port: Connection port (optional, deprecated field).
+        ethereum_port: Ethereum port (optional, deprecated field).
     """
 
     id: str

@@ -1,7 +1,7 @@
 """Client layer for aio-mrr library.
 
 This module provides the main facade client including:
-- MRRClient — главный фасад с единой точкой входа
+- MRRClient — main facade with a single entry point
 """
 
 from aio_mrr.client.client import MRRClient

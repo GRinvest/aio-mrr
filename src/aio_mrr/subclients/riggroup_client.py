@@ -1,13 +1,13 @@
-"""RigGroup Client для взаимодействия с RigGroup API.
+"""RigGroup Client for interacting with the RigGroup API.
 
-Этот модуль предоставляет RigGroupClient для работы с RigGroup API endpoints:
-- GET /riggroup — Получение списка групп rig'ов
-- PUT /riggroup — Создание новой группы rig'ов
-- GET /riggroup/{id} — Получение деталей группы rig'ов
-- PUT /riggroup/{id} — Обновление группы rig'ов
-- DELETE /riggroup/{id} — Удаление группы rig'ов
-- POST /riggroup/{id}/add/{rig_ids} — Добавление rig'ов в группу
-- POST /riggroup/{id}/remove/{rig_ids} — Удаление rig'ов из группы
+This module provides RigGroupClient for working with RigGroup API endpoints:
+- GET /riggroup — Get list of rig groups
+- PUT /riggroup — Create new rig group
+- GET /riggroup/{id} — Get rig group details
+- PUT /riggroup/{id} — Update rig group
+- DELETE /riggroup/{id} — Delete rig group
+- POST /riggroup/{id}/add/{rig_ids} — Add rigs to group
+- POST /riggroup/{id}/remove/{rig_ids} — Remove rigs from group
 """
 
 from __future__ import annotations
@@ -21,14 +21,14 @@ from aio_mrr.subclients.base import BaseSubClient
 
 
 class RigGroupClient(BaseSubClient):
-    """Client для работы с RigGroup API.
+    """Client for working with the RigGroup API.
 
-    Предоставляет методы для управления группами майнинг-установок (rig groups):
-    - создание и удаление групп
-    - обновление информации о группах
-    - добавление и удаление rig'ов из групп
+    Provides methods for managing mining rig groups:
+    - creating and deleting groups
+    - updating group information
+    - adding and removing rigs from groups
 
-    Пример использования:
+    Usage example:
         >>> async with MRRClient(api_key="key", api_secret="secret") as client:
         ...     response = await client.riggroup_client.get_list()
         ...     if response.success:
@@ -36,20 +36,20 @@ class RigGroupClient(BaseSubClient):
     """
 
     def __init__(self, http_client: HTTPClient) -> None:
-        """Инициализирует RigGroupClient.
+        """Initializes RigGroupClient.
 
         Args:
-            http_client: Экземпляр HTTPClient для выполнения запросов.
+            http_client: HTTPClient instance for performing requests.
         """
         super().__init__(http_client)
 
     async def get_list(self) -> MRRResponse[list[RigGroupInfo]]:
-        """Получает список ваших групп rig'ов.
+        """Retrieves the list of your rig groups.
 
         Returns:
-            MRRResponse[list[RigGroupInfo]] — ответ со списком групп:
-            - При успехе: MRRResponse(success=True, data=[RigGroupInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RigGroupInfo]] — response with group list:
+            - On success: MRRResponse(success=True, data=[RigGroupInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await riggroup_client.get_list()
@@ -75,15 +75,15 @@ class RigGroupClient(BaseSubClient):
         return result
 
     async def get_by_id(self, id: int) -> MRRResponse[RigGroupInfo]:
-        """Получает детали группы rig'ов по ID.
+        """Retrieves rig group details by ID.
 
         Args:
-            id: Идентификатор группы rig'ов.
+            id: Rig group identifier.
 
         Returns:
-            MRRResponse[RigGroupInfo] — ответ с информацией о группе:
-            - При успехе: MRRResponse(success=True, data=RigGroupInfo)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[RigGroupInfo] — response with group information:
+            - On success: MRRResponse(success=True, data=RigGroupInfo)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await riggroup_client.get_by_id(id=123)
@@ -108,15 +108,15 @@ class RigGroupClient(BaseSubClient):
         return result
 
     async def create(self, body: RigGroupCreateBody) -> MRRResponse[dict[str, Any]]:
-        """Создаёт новую группу rig'ов.
+        """Creates a new rig group.
 
         Args:
-            body: Тело запроса с параметрами создания группы.
+            body: Request body with group creation parameters.
 
         Returns:
-            MRRResponse[dict] — ответ с ID созданной группы:
-            - При успехе: MRRResponse(success=True, data={"id": 123, "message": "..."})
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[dict] — response with created group ID:
+            - On success: MRRResponse(success=True, data={"id": 123, "message": "..."})
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = RigGroupCreateBody(name="My Scrypt Rigs", rental_limit=10)
@@ -141,16 +141,16 @@ class RigGroupClient(BaseSubClient):
         return result
 
     async def update(self, id: int, body: RigGroupUpdateBody) -> MRRResponse[None]:
-        """Обновляет группу rig'ов.
+        """Updates a rig group.
 
         Args:
-            id: Идентификатор группы rig'ов для обновления.
-            body: Тело запроса с параметрами обновления (все поля опциональные).
+            id: Rig group identifier to update.
+            body: Request body with update parameters (all fields optional).
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = RigGroupUpdateBody(name="Updated Group Name", rental_limit=15)
@@ -175,15 +175,15 @@ class RigGroupClient(BaseSubClient):
         return result
 
     async def delete(self, id: int) -> MRRResponse[dict[str, Any]]:
-        """Удаляет группу rig'ов.
+        """Deletes a rig group.
 
         Args:
-            id: Идентификатор группы rig'ов для удаления.
+            id: Rig group identifier to delete.
 
         Returns:
-            MRRResponse[dict] — ответ с подтверждением удаления:
-            - При успехе: MRRResponse(success=True, data={"id": 123, "message": "..."})
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[dict] — response with deletion confirmation:
+            - On success: MRRResponse(success=True, data={"id": 123, "message": "..."})
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await riggroup_client.delete(id=123)
@@ -206,16 +206,16 @@ class RigGroupClient(BaseSubClient):
         return result
 
     async def add_rigs(self, id: int, rig_ids: list[int]) -> MRRResponse[dict[str, Any]]:
-        """Добавляет rig'и в группу.
+        """Adds rigs to a group.
 
         Args:
-            id: Идентификатор группы rig'ов.
-            rig_ids: Список ID rig'ов для добавления в группу.
+            id: Rig group identifier.
+            rig_ids: List of rig IDs to add to the group.
 
         Returns:
-            MRRResponse[dict] — ответ с подтверждением добавления:
-            - При успехе: MRRResponse(success=True, data={"id": ..., "message": "...", "rigs": [...]})
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[dict] — response with addition confirmation:
+            - On success: MRRResponse(success=True, data={"id": ..., "message": "...", "rigs": [...]})
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await riggroup_client.add_rigs(id=123, rig_ids=[12345, 12346])
@@ -239,16 +239,16 @@ class RigGroupClient(BaseSubClient):
         return result
 
     async def remove_rigs(self, id: int, rig_ids: list[int]) -> MRRResponse[dict[str, Any]]:
-        """Удаляет rig'и из группы.
+        """Removes rigs from a group.
 
         Args:
-            id: Идентификатор группы rig'ов.
-            rig_ids: Список ID rig'ов для удаления из группы.
+            id: Rig group identifier.
+            rig_ids: List of rig IDs to remove from the group.
 
         Returns:
-            MRRResponse[dict] — ответ с подтверждением удаления:
-            - При успехе: MRRResponse(success=True, data={"id": ..., "message": "...", "rigs": [...]})
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[dict] — response with removal confirmation:
+            - On success: MRRResponse(success=True, data={"id": ..., "message": "...", "rigs": [...]})
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await riggroup_client.remove_rigs(id=123, rig_ids=[12345, 12346])

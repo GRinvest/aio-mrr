@@ -14,21 +14,21 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-# Инициализация маскировщика секретов
+# Initialize secret masker
 _masker: SecretMasker = SecretMasker()
 
 
 def get_logger(name: str) -> Any:
-    """Создаёт изолированный логгер с маскированием секретов.
+    """Creates an isolated logger with secret masking.
 
-    Каждый логгер изолирован через привязку имени. Секреты автоматически
-    маскируются в выходных сообщениях через patch().
+    Each logger is isolated via name binding. Secrets are automatically
+    masked in output messages via patch().
 
     Args:
-        name: Имя логгера (например, модуля или компонента).
+        name: Logger name (e.g., module or component).
 
     Returns:
-        Логгер с привязанным именем и маскированием секретов.
+        Logger with bound name and secret masking.
 
     Examples:
         >>> logger = get_logger("http_client")
@@ -45,12 +45,12 @@ def get_logger(name: str) -> Any:
 
 
 def masker_mask_func(message: str) -> str:
-    """Функция для маскирования сообщения.
+    """Function for masking the message.
 
     Args:
-        message: Исходное сообщение.
+        message: Original message.
 
     Returns:
-        Замаскированное сообщение.
+        Masked message.
     """
     return _masker.mask(message)

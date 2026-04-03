@@ -1,18 +1,18 @@
-"""Rental Client для взаимодействия с Rental API.
+"""Rental Client for interacting with the Rental API.
 
-Этот модуль предоставляет RentalClient для работы с Rental API endpoints:
-- GET /rental — Список аренд
-- GET /rental/{ids} — Получение аренды по ID
-- PUT /rental — Создание новой аренды
-- PUT /rental/{ids}/profile — Применение профиля пула к арендам
-- GET /rental/{ids}/pool — Получение пулов, назначенных арендам
-- PUT /rental/{ids}/pool — Добавление или замена пула на арендах
-- DELETE /rental/{ids}/pool — Удаление пула с аренд
-- PUT /rental/{ids}/extend — Продление аренды
-- GET /rental/{ids}/graph — Получение графических данных аренды
-- GET /rental/{ids}/log — Получение журнала активности аренды
-- GET /rental/{ids}/message — Получение сообщений аренды
-- PUT /rental/{ids}/message — Отправка сообщения аренде
+This module provides RentalClient for working with Rental API endpoints:
+- GET /rental — List rentals
+- GET /rental/{ids} — Get rental by ID
+- PUT /rental — Create new rental
+- PUT /rental/{ids}/profile — Apply pool profile to rentals
+- GET /rental/{ids}/pool — Get pools assigned to rentals
+- PUT /rental/{ids}/pool — Add or replace pool on rentals
+- DELETE /rental/{ids}/pool — Remove pool from rentals
+- PUT /rental/{ids}/extend — Extend rental
+- GET /rental/{ids}/graph — Get rental graph data
+- GET /rental/{ids}/log — Get rental activity log
+- GET /rental/{ids}/message — Get rental messages
+- PUT /rental/{ids}/message — Send message to rental
 """
 
 from __future__ import annotations
@@ -27,15 +27,15 @@ from aio_mrr.subclients.base import BaseSubClient
 
 
 class RentalClient(BaseSubClient):
-    """Client для работы с Rental API.
+    """Client for working with the Rental API.
 
-    Предоставляет методы для управления арендами майнинг-установок:
-    - создание и получение аренд
-    - управление пулами и профилями
-    - продление аренды
-    - получение статистики, графических данных и логов
+    Provides methods for managing mining rig rentals:
+    - creating and retrieving rentals
+    - managing pools and profiles
+    - extending rentals
+    - retrieving statistics, graph data, and logs
 
-    Пример использования:
+    Usage example:
         >>> async with MRRClient(api_key="key", api_secret="secret") as client:
         ...     response = await client.rental.get_list(params={"type": "renter"})
         ...     if response.success:
@@ -43,30 +43,30 @@ class RentalClient(BaseSubClient):
     """
 
     def __init__(self, http_client: HTTPClient) -> None:
-        """Инициализирует RentalClient.
+        """Initializes RentalClient.
 
         Args:
-            http_client: Экземпляр HTTPClient для выполнения запросов.
+            http_client: HTTPClient instance for performing requests.
         """
         super().__init__(http_client)
 
     async def get_list(self, params: dict[str, Any] | None = None) -> MRRResponse[list[RentalInfo]]:
-        """Получает список аренд с фильтрацией и пагинацией.
+        """Retrieves a list of rentals with filtering and pagination.
 
         Args:
-            params: Query параметры для фильтрации:
-                - type: 'owner' или 'renter'
-                - algo: фильтр по алгоритму
-                - history: true = завершённые, false = активные
-                - rig: фильтр по rig ID
-                - start: старт пагинации
-                - limit: лимит пагинации
-                - currency: валюта [BTC,LTC,ETH,DOGE,BCH]
+            params: Query parameters for filtering:
+                - type: 'owner' or 'renter'
+                - algo: filter by algorithm
+                - history: true = completed, false = active
+                - rig: filter by rig ID
+                - start: pagination start
+                - limit: pagination limit
+                - currency: currency [BTC,LTC,ETH,DOGE,BCH]
 
         Returns:
-            MRRResponse[list[RentalInfo]] — ответ со списком аренд:
-            - При успехе: MRRResponse(success=True, data=[RentalInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RentalInfo]] — response with rental list:
+            - On success: MRRResponse(success=True, data=[RentalInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.get_list(params={"type": "renter", "history": False})
@@ -100,15 +100,15 @@ class RentalClient(BaseSubClient):
         return result
 
     async def get_by_ids(self, ids: list[int]) -> MRRResponse[RentalInfo]:
-        """Получает информацию об аренде по ID.
+        """Retrieves rental information by ID.
 
         Args:
-            ids: Список ID аренд для получения (используется первый ID).
+            ids: List of rental IDs to retrieve (first ID is used).
 
         Returns:
-            MRRResponse[RentalInfo] — ответ с информацией об аренде:
-            - При успехе: MRRResponse(success=True, data=RentalInfo)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[RentalInfo] — response with rental information:
+            - On success: MRRResponse(success=True, data=RentalInfo)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.get_by_ids(ids=[54321])
@@ -134,21 +134,21 @@ class RentalClient(BaseSubClient):
         return result
 
     async def create(self, body: RentalCreateBody) -> MRRResponse[dict[str, Any]]:
-        """Создаёт новую аренду.
+        """Creates a new rental.
 
         Args:
-            body: Тело запроса с параметрами создания аренды:
-                - rig: ID rig для аренды (обязательное)
-                - length: длительность в часах (обязательное)
-                - profile: ID профиля пула (обязательное)
-                - currency: валюта оплаты (по умолчанию BTC)
-                - rate_type: тип хеша (по умолчанию 'mh')
-                - rate_price: цена за единицу хеша в день
+            body: Request body with rental creation parameters:
+                - rig: Rig ID for rental (required)
+                - length: duration in hours (required)
+                - profile: Pool profile ID (required)
+                - currency: payment currency (default BTC)
+                - rate_type: hash type (default 'mh')
+                - rate_price: price per hash unit per day
 
         Returns:
-            MRRResponse[dict] — ответ с ID созданной аренды:
-            - При успехе: MRRResponse(success=True, data={"id": "54321"})
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[dict] — response with created rental ID:
+            - On success: MRRResponse(success=True, data={"id": "54321"})
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = RentalCreateBody(rig=12345, length=24, profile=678, currency="BTC")
@@ -173,16 +173,16 @@ class RentalClient(BaseSubClient):
         return result
 
     async def update_profile(self, ids: list[int], profile: int) -> MRRResponse[None]:
-        """Применяет профиль пула к арендам.
+        """Applies a pool profile to rentals.
 
         Args:
-            ids: Список ID аренд для обновления.
-            profile: ID профиля для применения.
+            ids: List of rental IDs to update.
+            profile: Profile ID to apply.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.update_profile(ids=[54321], profile=678)
@@ -207,15 +207,15 @@ class RentalClient(BaseSubClient):
         return result
 
     async def get_pools(self, ids: list[int]) -> MRRResponse[list[Pool]]:
-        """Получает пулы, назначенные арендам.
+        """Retrieves pools assigned to rentals.
 
         Args:
-            ids: Список ID аренд для получения пулов.
+            ids: List of rental IDs to get pools for.
 
         Returns:
-            MRRResponse[list[Pool]] — ответ со списком пулов:
-            - При успехе: MRRResponse(success=True, data=[Pool, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[Pool]] — response with pool list:
+            - On success: MRRResponse(success=True, data=[Pool, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.get_pools(ids=[54321])
@@ -242,21 +242,21 @@ class RentalClient(BaseSubClient):
         return result
 
     async def update_pool(self, ids: list[int], body: RentalPoolBody) -> MRRResponse[None]:
-        """Добавляет или заменяет пул на арендах.
+        """Adds or replaces a pool on rentals.
 
         Args:
-            ids: Список ID аренд для обновления.
-            body: Тело запроса с данными пула:
-                - host: хост пула (обязательное)
-                - port: порт пула (обязательное)
-                - user: имя worker (обязательное)
-                - password: пароль worker (обязательное)
-                - priority: приоритет (0-4)
+            ids: List of rental IDs to update.
+            body: Request body with pool data:
+                - host: pool host (required)
+                - port: pool port (required)
+                - user: worker name (required)
+                - password: worker password (required)
+                - priority: priority (0-4)
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = RentalPoolBody(
@@ -288,17 +288,17 @@ class RentalClient(BaseSubClient):
         return result
 
     async def delete_pool(self, ids: list[int]) -> MRRResponse[None]:
-        """Удаляет пул с аренд.
+        """Removes a pool from rentals.
 
-        Удаляет пул с указанным приоритетом с аренд.
+        Removes the pool with the specified priority from rentals.
 
         Args:
-            ids: Список ID аренд для удаления пула.
+            ids: List of rental IDs to remove the pool from.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.delete_pool(ids=[54321])
@@ -322,25 +322,25 @@ class RentalClient(BaseSubClient):
         return result
 
     async def extend(self, ids: list[int], length: float, getcost: bool | None = None) -> MRRResponse[None]:
-        """Покупает продление аренды.
+        """Purchases a rental extension.
 
         Args:
-            ids: Список ID аренд для продления.
-            length: часы для продления.
-            getcost: если установлено, симулирует продление и возвращает стоимость.
+            ids: List of rental IDs to extend.
+            length: Hours to extend.
+            getcost: If set, simulates extension and returns cost.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
-            # Продление аренды
+            # Extend rental
             >>> response = await rental_client.extend(ids=[54321], length=12)
             >>> if response.success:
             ...     print("Rental extended successfully")
 
-            # Симуляция стоимости продления
+            # Simulate extension cost
             >>> response = await rental_client.extend(ids=[54321], length=12, getcost=True)
             >>> if response.success:
             ...     print("Cost simulation completed")
@@ -368,17 +368,17 @@ class RentalClient(BaseSubClient):
     async def get_graph(
         self, ids: list[int], hours: float | None = None, interval: str | None = None
     ) -> MRRResponse[GraphData]:
-        """Получает графические данные аренды (исторический хешрейт, простои).
+        """Retrieves rental graph data (historical hashrate, downtimes).
 
         Args:
-            ids: Список ID аренд (используется первый ID).
-            hours: часы данных (макс. 2 недели). По умолчанию 168.
-            interval: интервал данных. По умолчанию None.
+            ids: List of rental IDs (first ID is used).
+            hours: Hours of data (max. 2 weeks). Default 168.
+            interval: Data interval. Default None.
 
         Returns:
-            MRRResponse[GraphData] — ответ с графическими данными:
-            - При успехе: MRRResponse(success=True, data=GraphData)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[GraphData] — response with graph data:
+            - On success: MRRResponse(success=True, data=GraphData)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.get_graph(ids=[54321], hours=24)
@@ -411,15 +411,15 @@ class RentalClient(BaseSubClient):
         return result
 
     async def get_log(self, ids: list[int]) -> MRRResponse[list[RentalLogEntry]]:
-        """Получает журнал активности аренды.
+        """Retrieves rental activity log.
 
         Args:
-            ids: Список ID аренд для получения логов (используется первый ID).
+            ids: List of rental IDs to get logs for (first ID is used).
 
         Returns:
-            MRRResponse[list[RentalLogEntry]] — ответ со списком записей лога:
-            - При успехе: MRRResponse(success=True, data=[RentalLogEntry, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RentalLogEntry]] — response with log entries:
+            - On success: MRRResponse(success=True, data=[RentalLogEntry, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.get_log(ids=[54321])
@@ -446,15 +446,15 @@ class RentalClient(BaseSubClient):
         return result
 
     async def get_message(self, ids: list[int]) -> MRRResponse[list[RentalMessage]]:
-        """Получает сообщения аренды.
+        """Retrieves rental messages.
 
         Args:
-            ids: Список ID аренд для получения сообщений (используется первый ID).
+            ids: List of rental IDs to get messages for (first ID is used).
 
         Returns:
-            MRRResponse[list[RentalMessage]] — ответ со списком сообщений:
-            - При успехе: MRRResponse(success=True, data=[RentalMessage, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RentalMessage]] — response with message list:
+            - On success: MRRResponse(success=True, data=[RentalMessage, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.get_message(ids=[54321])
@@ -481,16 +481,16 @@ class RentalClient(BaseSubClient):
         return result
 
     async def send_message(self, ids: list[int], message: str) -> MRRResponse[None]:
-        """Отправляет сообщение аренде.
+        """Sends a message to a rental.
 
         Args:
-            ids: Список ID аренд для отправки сообщения (используется первый ID).
-            message: текст сообщения.
+            ids: List of rental IDs to send message to (first ID is used).
+            message: Message text.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rental_client.send_message(ids=[54321], message="Please check the rig status")

@@ -1,22 +1,22 @@
-"""Иерархия исключений для библиотеки aio-mrr.
+"""Exception hierarchy for the aio-mrr library.
 
-Эти исключения предназначены для внутреннего использования и для опционального
-try/except в родительском приложении. Все ошибки в библиотеке возвращаются
-как MRRResponse(success=False, error=...), но исключения могут быть полезны
-для отладки и специфичной обработки.
+These exceptions are intended for internal use and for optional
+try/except in the parent application. All errors in the library are returned
+as MRRResponse(success=False, error=...), but exceptions can be useful
+for debugging and specific handling.
 """
 
 from typing import Any
 
 
 class MRRBaseError(Exception):
-    """Базовый класс для всех исключений aio-mrr."""
+    """Base class for all aio-mrr exceptions."""
 
     def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
         """
         Args:
-            message: Человекочитаемое описание ошибки.
-            details: Дополнительные данные об ошибке.
+            message: Human-readable error description.
+            details: Additional error data.
         """
         super().__init__(message)
         self.message = message
@@ -24,7 +24,7 @@ class MRRBaseError(Exception):
 
 
 class MRRNetworkError(MRRBaseError):
-    """Исключение для сетевых ошибок (aiohttp, connection errors)."""
+    """Exception for network errors (aiohttp, connection errors)."""
 
     def __init__(
         self,
@@ -35,10 +35,10 @@ class MRRNetworkError(MRRBaseError):
     ) -> None:
         """
         Args:
-            message: Человекочитаемое описание ошибки.
-            details: Дополнительные данные об ошибке.
-            host: Хост, к которому не удалось подключиться.
-            port: Порт, к которому не удалось подключиться.
+            message: Human-readable error description.
+            details: Additional error data.
+            host: Host that failed to connect.
+            port: Port that failed to connect.
         """
         error_details = details or {}
         if host is not None:
@@ -49,7 +49,7 @@ class MRRNetworkError(MRRBaseError):
 
 
 class MRRAPIError(MRRBaseError):
-    """Исключение для ошибок API MRR (HTTP status >= 400)."""
+    """Exception for MRR API errors (HTTP status >= 400)."""
 
     def __init__(
         self,
@@ -60,10 +60,10 @@ class MRRAPIError(MRRBaseError):
     ) -> None:
         """
         Args:
-            message: Человекочитаемое описание ошибки.
-            details: Дополнительные данные об ошибке.
-            http_status: HTTP статус код ответа.
-            error_code: Код ошибки от API.
+            message: Human-readable error description.
+            details: Additional error data.
+            http_status: HTTP status code of the response.
+            error_code: Error code from the API.
         """
         error_details = details or {}
         if http_status is not None:
@@ -76,7 +76,7 @@ class MRRAPIError(MRRBaseError):
 
 
 class MRRValidationError(MRRBaseError):
-    """Исключение для ошибок валидации Pydantic."""
+    """Exception for Pydantic validation errors."""
 
     def __init__(
         self,
@@ -87,10 +87,10 @@ class MRRValidationError(MRRBaseError):
     ) -> None:
         """
         Args:
-            message: Человекочитаемое описание ошибки.
-            details: Дополнительные данные об ошибке.
-            model_name: Название модели Pydantic.
-            field: Поле, которое не прошло валидацию.
+            message: Human-readable error description.
+            details: Additional error data.
+            model_name: Pydantic model name.
+            field: Field that failed validation.
         """
         error_details = details or {}
         if model_name is not None:
@@ -103,7 +103,7 @@ class MRRValidationError(MRRBaseError):
 
 
 class MRRTimeoutError(MRRNetworkError):
-    """Исключение для ошибок таймаута."""
+    """Exception for timeout errors."""
 
     def __init__(
         self,
@@ -114,10 +114,10 @@ class MRRTimeoutError(MRRNetworkError):
     ) -> None:
         """
         Args:
-            message: Человекочитаемое описание ошибки.
-            details: Дополнительные данные об ошибке.
-            timeout_type: Тип таймаута ('connect' или 'read').
-            timeout_value: Значение таймаута в секундах.
+            message: Human-readable error description.
+            details: Additional error data.
+            timeout_type: Type of timeout ('connect' or 'read').
+            timeout_value: Timeout value in seconds.
         """
         error_details = details or {}
         if timeout_type is not None:

@@ -1,6 +1,6 @@
-"""Модели Pydantic для библиотеки aio-mrr.
+"""Pydantic models for the aio-mrr library.
 
-Этот пакет содержит все Pydantic-модели для валидации request/response данных.
+This package contains all Pydantic models for request/response data validation.
 """
 
 from aio_mrr.models.account import (

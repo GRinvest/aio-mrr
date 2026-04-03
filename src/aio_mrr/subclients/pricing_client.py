@@ -1,6 +1,6 @@
-"""Pricing Client для взаимодействия с Pricing API.
+"""Pricing Client for interacting with the Pricing API.
 
-Этот модуль предоставляет PricingClient для работы с Pricing API endpoint:
+This module provides PricingClient for working with the Pricing API endpoint:
 - GET /pricing
 """
 
@@ -14,13 +14,13 @@ from aio_mrr.subclients.base import BaseSubClient
 
 
 class PricingClient(BaseSubClient):
-    """Client для работы с Pricing API.
+    """Client for working with the Pricing API.
 
-    Предоставляет методы для получения информации о рыночных ставках ценообразования:
-    - текущие курсы конвертации валют
-    - рыночные ставки по алгоритмам майнинга
+    Provides methods for retrieving market pricing rate information:
+    - current currency conversion rates
+    - market rates for mining algorithms
 
-    Пример использования:
+    Usage example:
         >>> async with MRRClient(api_key="key", api_secret="secret") as client:
         ...     response = await client.pricing_client.get_pricing()
         ...     if response.success:
@@ -28,23 +28,23 @@ class PricingClient(BaseSubClient):
     """
 
     def __init__(self, http_client: HTTPClient) -> None:
-        """Инициализирует PricingClient.
+        """Initializes PricingClient.
 
         Args:
-            http_client: Экземпляр HTTPClient для выполнения запросов.
+            http_client: HTTPClient instance for performing requests.
         """
         super().__init__(http_client)
 
     async def get_pricing(self) -> MRRResponse[PricingInfo]:
-        """Получает информацию о рыночных ставках ценообразования.
+        """Retrieves market pricing rate information.
 
-        Возвращает текущие курсы конвертации валют относительно BTC и
-        рыночные ставки по всем доступным алгоритмам майнинга в разных валютах.
+        Returns current currency conversion rates relative to BTC and
+        market rates for all available mining algorithms in different currencies.
 
         Returns:
-            MRRResponse[PricingInfo] — ответ с информацией о ценообразовании:
-            - При успехе: MRRResponse(success=True, data=PricingInfo)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[PricingInfo] — response with pricing information:
+            - On success: MRRResponse(success=True, data=PricingInfo)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await pricing_client.get_pricing()

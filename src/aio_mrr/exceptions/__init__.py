@@ -1,10 +1,10 @@
-"""Исключения для библиотеки aio-mrr.
+"""Exceptions for the aio-mrr library.
 
-Этот модуль экспортирует все исключения для удобства импорта:
+This module exports all exceptions for convenient importing:
 
     from aio_mrr.exceptions import MRRBaseError, MRRNetworkError
 
-Или напрямую из aio_mrr:
+Or directly from aio_mrr:
 
     from aio_mrr import MRRBaseError
 """

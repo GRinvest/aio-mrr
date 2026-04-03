@@ -1,19 +1,28 @@
-"""HTTP session management for aio-mrr library."""
+"""Manages the lifecycle of aiohttp.ClientSession.
+
+Provides lazy initialization and proper management of
+connection pooling via TCPConnector.
+
+Attributes:
+    limit: Maximum number of parallel connections (default: 200).
+    limit_per_host: Maximum connections per host (default: 50).
+    keepalive_timeout: Time to keep idle connections alive in seconds (default: 30).
+"""
 
 from __future__ import annotations
 from aiohttp import ClientSession, TCPConnector
 
 
 class AioHTTPSession:
-    """Управление жизненным циклом aiohttp.ClientSession.
+    """Manages the lifecycle of aiohttp.ClientSession.
 
-    Предоставляет lazy initialization и корректное управление
-    connection pooling через TCPConnector.
+    Provides lazy initialization and proper management of
+    connection pooling via TCPConnector.
 
     Attributes:
-        limit: Максимальное количество параллельных соединений (дефолт: 200).
-        limit_per_host: Максимальное соединений на один хост (дефолт: 50).
-        keepalive_timeout: Время удерживания idle соединений в секундах (дефолт: 30).
+        limit: Maximum number of parallel connections (default: 200).
+        limit_per_host: Maximum connections per host (default: 50).
+        keepalive_timeout: Time to keep idle connections alive in seconds (default: 30).
     """
 
     def __init__(
@@ -22,12 +31,12 @@ class AioHTTPSession:
         limit_per_host: int = 50,
         keepalive_timeout: int = 30,
     ) -> None:
-        """Инициализация AioHTTPSession.
+        """Initializes AioHTTPSession.
 
         Args:
-            limit: Максимальное количество параллельных соединений.
-            limit_per_host: Максимальное соединений на один хост.
-            keepalive_timeout: Время удерживания idle соединений в секундах.
+            limit: Maximum number of parallel connections.
+            limit_per_host: Maximum connections per host.
+            keepalive_timeout: Time to keep idle connections alive in seconds.
         """
         self._limit = limit
         self._limit_per_host = limit_per_host
@@ -35,10 +44,10 @@ class AioHTTPSession:
         self._session: ClientSession | None = None
 
     def _create_connector(self) -> TCPConnector:
-        """Создаёт TCPConnector с настроенным connection pooling.
+        """Creates a TCPConnector with configured connection pooling.
 
         Returns:
-            TCPConnector: Конфигурированный connector для aiohttp.ClientSession.
+            TCPConnector: Configured connector for aiohttp.ClientSession.
         """
         return TCPConnector(
             limit=self._limit,
@@ -48,14 +57,14 @@ class AioHTTPSession:
     def get_session(self) -> ClientSession:
         """Lazy initialization of aiohttp.ClientSession.
 
-        Создаёт session при первом вызове, если она ещё не была создана.
-        Session создаётся с TCPConnector для управления connection pooling.
+        Creates a session on first call if not already created.
+        Session is created with TCPConnector for connection pooling management.
 
         Returns:
-            ClientSession: Экземпляр aiohttp.ClientSession.
+            ClientSession: aiohttp.ClientSession instance.
 
         Raises:
-            RuntimeError: Если session не может быть создана.
+            RuntimeError: If the session cannot be created.
         """
         if self._session is None:
             connector = self._create_connector()
@@ -65,10 +74,10 @@ class AioHTTPSession:
     async def __aenter__(self) -> ClientSession:
         """Async context manager entry.
 
-        Инициализирует session при входе в контекст.
+        Initializes the session upon entering the context.
 
         Returns:
-            ClientSession: Экземпляр aiohttp.ClientSession.
+            ClientSession: aiohttp.ClientSession instance.
         """
         return self.get_session()
 
@@ -77,12 +86,12 @@ class AioHTTPSession:
     ) -> None:
         """Async context manager exit — closes session.
 
-        Закрывает session при выходе из контекста.
+        Closes the session when exiting the context.
 
         Args:
-            exc_type: Тип исключения, если было выброшено.
-            exc_val: Экземпляр исключения, если было выброшено.
-            exc_tb: Traceback, если было выброшено.
+            exc_type: Exception type, if raised.
+            exc_val: Exception instance, if raised.
+            exc_tb: Traceback, if raised.
         """
         if self._session is not None:
             await self._session.close()

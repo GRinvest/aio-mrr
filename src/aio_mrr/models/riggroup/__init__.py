@@ -1,7 +1,7 @@
-"""Модели для RigGroup API.
+"""Models for RigGroup API.
 
-Этот пакет содержит Pydantic-модели для валидации request/response данных
-для эндпоинтов RigGroup API (/riggroup/*).
+This package contains Pydantic models for validating request/response data
+for RigGroup API endpoints (/riggroup/*).
 """
 
 from aio_mrr.models.riggroup.request import RigGroupCreateBody, RigGroupUpdateBody

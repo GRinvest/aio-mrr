@@ -1,16 +1,15 @@
-"""Response модели для Info API.
+"""Response models for Info API.
 
-Этот модуль содержит модели для ответов от Info API:
-- ServersList — ответ для GET /info/servers
-- AlgoInfo — ответ для GET /info/algos и GET /info/algos/{name}
-- CurrencyInfo — ответ для GET /info/currencies
+This module contains models for responses from the Info API:
+- ServersList — response for GET /info/servers
+- AlgoInfo — response for GET /info/algos and GET /info/algos/{name}
+- CurrencyInfo — response for GET /info/currencies
 """
 
 from typing import Any
 
-from pydantic import field_validator
-
 from aio_mrr.models.base import BaseMRRModel
+from pydantic import field_validator
 
 
 def _parse_float_or_none(value: Any) -> float | None:
@@ -21,12 +20,12 @@ def _parse_float_or_none(value: Any) -> float | None:
 
 
 class HashInfo(BaseMRRModel):
-    """Информация о хешрэйте.
+    """Hashrate information.
 
     Attributes:
-        hash: Значение хешрейта.
-        unit: Единица измерения (mh, th, etc.).
-        nice: Человекочитаемое представление (например, "882.70G").
+        hash: Hashrate value.
+        unit: Unit of measurement (mh, th, etc.).
+        nice: Human-readable representation (e.g., "882.70G").
     """
 
     hash: float | None = None
@@ -40,12 +39,12 @@ class HashInfo(BaseMRRModel):
 
 
 class PriceInfo(BaseMRRModel):
-    """Информация о цене.
+    """Price information.
 
     Attributes:
-        amount: Значение цены.
-        currency: Валюта (BTC, LTC, ETH, DOGE, BCH).
-        unit: Единица измерения (например, "mh*day", "th*day").
+        amount: Price value.
+        currency: Currency (BTC, LTC, ETH, DOGE, BCH).
+        unit: Unit of measurement (e.g., "mh*day", "th*day").
     """
 
     amount: str
@@ -54,11 +53,11 @@ class PriceInfo(BaseMRRModel):
 
 
 class AvailableHashInfo(BaseMRRModel):
-    """Информация о доступном хешрэйте.
+    """Available hashrate information.
 
     Attributes:
-        rigs: Количество доступных ригов.
-        hash: Информация о хешрэйте.
+        rigs: Number of available rigs.
+        hash: Hashrate information.
     """
 
     rigs: str
@@ -66,11 +65,11 @@ class AvailableHashInfo(BaseMRRModel):
 
 
 class RentedHashInfo(BaseMRRModel):
-    """Информация об арендованном хешрэйте.
+    """Rented hashrate information.
 
     Attributes:
-        rigs: Количество арендованных ригов.
-        hash: Информация о хешрэйте.
+        rigs: Number of rented rigs.
+        hash: Hashrate information.
     """
 
     rigs: str
@@ -78,12 +77,12 @@ class RentedHashInfo(BaseMRRModel):
 
 
 class PricesInfo(BaseMRRModel):
-    """Информация о ценах.
+    """Price information.
 
     Attributes:
-        lowest: Самая низкая цена.
-        last_10: Цена последних 10 аренд.
-        last: Последняя цена.
+        lowest: Lowest price.
+        last_10: Price of the last 10 rentals.
+        last: Last price.
     """
 
     lowest: PriceInfo
@@ -92,12 +91,12 @@ class PricesInfo(BaseMRRModel):
 
 
 class AlgoStats(BaseMRRModel):
-    """Статистика для алгоритма.
+    """Statistics for an algorithm.
 
     Attributes:
-        available: Информация о доступном хешрэйте.
-        rented: Информация об арендованном хешрэйте.
-        prices: Информация о ценах.
+        available: Available hashrate information.
+        rented: Rented hashrate information.
+        prices: Price information.
     """
 
     available: AvailableHashInfo
@@ -105,21 +104,21 @@ class AlgoStats(BaseMRRModel):
     prices: PricesInfo
 
 
-# --- Основные модели ---
+# --- Main models ---
 
 
 class AlgoInfo(BaseMRRModel):
-    """Информация об алгоритме майнинга.
+    """Mining algorithm information.
 
-    Используется для ответов:
-    - GET /info/algos (список алгоритмов)
-    - GET /info/algos/{name} (один алгоритм)
+    Used for responses:
+    - GET /info/algos (list of algorithms)
+    - GET /info/algos/{name} (single algorithm)
 
     Attributes:
-        name: Название алгоритма (например, "scrypt", "sha256").
-        display: Отображаемое название (например, "Scrypt").
-        suggested_price: Рекомендуемая цена.
-        stats: Статистика по алгоритму.
+        name: Algorithm name (e.g., "scrypt", "sha256").
+        display: Display name (e.g., "Scrypt").
+        suggested_price: Suggested price.
+        stats: Algorithm statistics.
     """
 
     name: str
@@ -129,14 +128,14 @@ class AlgoInfo(BaseMRRModel):
 
 
 class ServerInfo(BaseMRRModel):
-    """Информация о сервере MRR.
+    """MRR server information.
 
     Attributes:
-        id: Идентификатор сервера.
-        name: Имя сервера (например, "us-central01.miningrigrentals.com").
-        region: Регион сервера (например, "us-central", "eu-ru").
-        port: Порт для подключения (устаревшее поле).
-        ethereum_port: Порт для Ethereum (устаревшее поле).
+        id: Server identifier.
+        name: Server name (e.g., "us-central01.miningrigrentals.com").
+        region: Server region (e.g., "us-central", "eu-ru").
+        port: Connection port (deprecated field).
+        ethereum_port: Ethereum port (deprecated field).
     """
 
     id: str
@@ -147,26 +146,26 @@ class ServerInfo(BaseMRRModel):
 
 
 class ServersList(BaseMRRModel):
-    """Список серверов MRR.
+    """List of MRR servers.
 
-    Ответ для GET /info/servers.
+    Response for GET /info/servers.
 
     Attributes:
-        servers: Список информации о серверах.
+        servers: List of server information.
     """
 
     servers: list[ServerInfo]
 
 
 class CurrencyInfo(BaseMRRModel):
-    """Информация о валюте.
+    """Currency information.
 
-    Используется для ответа GET /info/currencies.
+    Used for GET /info/currencies response.
 
     Attributes:
-        name: Название валюты (например, "BTC", "LTC").
-        enabled: Флаг доступности валюты для платежей.
-        txfee: Комиссия за вывод средств.
+        name: Currency name (e.g., "BTC", "LTC").
+        enabled: Flag indicating currency availability for payments.
+        txfee: Withdrawal fee.
     """
 
     name: str

@@ -1,6 +1,6 @@
-"""Модели для Info API.
+"""Models for Info API.
 
-Этот модуль содержит модели для эндпоинтов /info/*:
+This module contains models for /info/* endpoints:
 - /info/servers
 - /info/algos
 - /info/algos/{name}

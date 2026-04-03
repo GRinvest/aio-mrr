@@ -1,12 +1,12 @@
 site_name: aio-mrr Documentation
-site_description: Асинхронная библиотека для MiningRigRentals API v2 by GRinvest
+site_description: Async library for MiningRigRentals API v2 by GRinvest
 site_author: GRinvest / SibNeuroTech
 repo_name: GRinvest/aio-mrr
 repo_url: https://github.com/GRinvest/aio-mrr
 
 theme:
   name: material
-  language: ru
+  language: en
   features:
     - navigation.tabs
     - navigation.sections
@@ -24,13 +24,13 @@ theme:
       accent: indigo
       toggle:
         icon: material/brightness-7
-        name: Переключить на тёмную тему
+        name: Switch to dark mode
     - scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-4
-        name: Переключить на светлую тему
+        name: Switch to light mode
   font:
     text: Roboto
     code: Roboto Mono
@@ -53,21 +53,37 @@ markdown_extensions:
 
 plugins:
   - search:
-      lang: ru
+      lang:
+        - en
+        - ru
+        - zh
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: ru
+          name: Русский
+          build: true
+        - locale: zh
+          name: 中文
+          build: true
 
 nav:
-  - Главная: index.md
-  - Начало работы:
-    - Установка и аутентификация: authentication.md
-    - Обработка ошибок: error-handling.md
-    - Модели данных: models.md
-  - Справочник API:
-    - Аккаунт и профили: api-reference/account.md
-    - Риги: api-reference/rigs.md
-    - Аренды: api-reference/rentals.md
-    - Группы ригов: api-reference/rig-groups.md
-    - Информация: api-reference/info.md
-    - Ценообразование: api-reference/pricing.md
-  - Примеры:
-    - Быстрый старт: https://github.com/GRinvest/aio-mrr/blob/main/examples/01_quickstart.py
-    - Все примеры: https://github.com/GRinvest/aio-mrr/tree/main/examples/
+  - Home: index.md
+  - Getting Started:
+    - Setup & Authentication: authentication.md
+    - Error Handling: error-handling.md
+    - Data Models: models.md
+  - API Reference:
+    - Account & Profiles: api-reference/account.md
+    - Rigs: api-reference/rigs.md
+    - Rentals: api-reference/rentals.md
+    - Rig Groups: api-reference/rig-groups.md
+    - Info: api-reference/info.md
+    - Pricing: api-reference/pricing.md
+  - Examples:
+    - Quick Start: https://github.com/GRinvest/aio-mrr/blob/main/examples/01_quickstart.py
+    - All Examples: https://github.com/GRinvest/aio-mrr/tree/main/examples/

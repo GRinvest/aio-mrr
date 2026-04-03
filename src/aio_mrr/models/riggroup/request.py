@@ -1,8 +1,8 @@
-"""Request модели для RigGroup API.
+"""Request models for RigGroup API.
 
-Этот модуль содержит модели для request данных RigGroup API:
-- RigGroupCreateBody — тело запроса для PUT /riggroup
-- RigGroupUpdateBody — тело запроса для PUT /riggroup/{id}
+This module contains models for request data of the RigGroup API:
+- RigGroupCreateBody — request body for PUT /riggroup
+- RigGroupUpdateBody — request body for PUT /riggroup/{id}
 """
 
 from pydantic import Field
@@ -11,30 +11,30 @@ from aio_mrr.models.base import BaseMRRModel
 
 
 class RigGroupCreateBody(BaseMRRModel):
-    """Тело запроса для создания новой группы rig'ов (PUT /riggroup).
+    """Request body for creating a new rig group (PUT /riggroup).
 
     Attributes:
-        name: Название группы. Обязательное поле.
-        enabled: Флаг включения группы. По умолчанию True.
-        rental_limit: Лимит активных аренд. По умолчанию 1.
+        name: Group name. Required field.
+        enabled: Group enabled flag. Default True.
+        rental_limit: Maximum active rentals. Default 1.
     """
 
-    name: str = Field(..., description="Название группы")
-    enabled: bool = Field(default=True, description="Включена/отключена группа")
-    rental_limit: int = Field(default=1, description="Лимит активных аренд")
+    name: str = Field(..., description="Group name")
+    enabled: bool = Field(default=True, description="Group enabled/disabled")
+    rental_limit: int = Field(default=1, description="Maximum active rentals")
 
 
 class RigGroupUpdateBody(BaseMRRModel):
-    """Тело запроса для обновления группы rig'ов (PUT /riggroup/{id}).
+    """Request body for updating a rig group (PUT /riggroup/{id}).
 
-    Все поля опциональные — можно обновлять только нужные.
+    All fields are optional — you can update only the fields you need.
 
     Attributes:
-        name: Новое название группы (опционально).
-        enabled: Новый статус включения (опционально).
-        rental_limit: Новый лимит аренд (опционально).
+        name: New group name (optional).
+        enabled: New enabled status (optional).
+        rental_limit: New rental limit (optional).
     """
 
-    name: str | None = Field(default=None, description="Новое название группы")
-    enabled: bool | None = Field(default=None, description="Новый статус включения")
-    rental_limit: int | None = Field(default=None, description="Новый лимит аренд")
+    name: str | None = Field(default=None, description="New group name")
+    enabled: bool | None = Field(default=None, description="New enabled status")
+    rental_limit: int | None = Field(default=None, description="New rental limit")

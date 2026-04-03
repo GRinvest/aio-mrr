@@ -1,13 +1,13 @@
-"""MRRClient — главный фасад библиотеки aio-mrr.
+"""MRRClient — main facade of the aio-mrr library.
 
-Этот модуль предоставляет MRRClient — единую точку входа для взаимодействия
-с MiningRigRentals API v2. Client использует паттерн Facade для упрощения
-доступа ко всем подсистемам API через единый интерфейс.
+This module provides MRRClient — the single entry point for interacting
+with MiningRigRentals API v2. The client uses the Facade pattern to simplify
+access to all API subsystems through a unified interface.
 
-Автор: GRinvest / SibNeuroTech
-Лицензия: MIT
+Author: GRinvest / SibNeuroTech
+License: MIT
 
-Паттерн использования:
+Usage pattern:
     async with MRRClient(
         api_key="YOUR_KEY",
         api_secret="YOUR_SECRET",
@@ -33,18 +33,18 @@ from aio_mrr.subclients.riggroup_client import RigGroupClient
 
 
 class MRRClient:
-    """Главный фасад для взаимодействия с MiningRigRentals API v2.
+    """Main facade for interacting with MiningRigRentals API v2.
 
-    Этот класс предоставляет единую точку входа для всех API операций.
-    Он создаёт и управляет жизненным циклом всех sub-clients и HTTP-сессии.
+    This class provides a single entry point for all API operations.
+    It creates and manages the lifecycle of all sub-clients and the HTTP session.
 
     Attributes:
-        info: Client для /info/* endpoints.
-        account: Client для /account/* endpoints.
-        rig: Client для /rig/* endpoints.
-        riggroup: Client для /riggroup/* endpoints.
-        rental: Client для /rental/* endpoints.
-        pricing: Client для /pricing endpoint.
+        info: Client for /info/* endpoints.
+        account: Client for /account/* endpoints.
+        rig: Client for /rig/* endpoints.
+        riggroup: Client for /riggroup/* endpoints.
+        rental: Client for /rental/* endpoints.
+        pricing: Client for /pricing endpoint.
 
     Example:
         >>> async with MRRClient(
@@ -64,14 +64,14 @@ class MRRClient:
         read_timeout: float = 60.0,
         max_retries: int = 3,
     ) -> None:
-        """Инициализирует MRRClient.
+        """Initializes MRRClient.
 
         Args:
-            api_key: API ключ MRR.
-            api_secret: API секрет MRR.
-            connect_timeout: Таймаут подключения в секундах (дефолт: 30.0).
-            read_timeout: Таймаут чтения в секундах (дефолт: 60.0).
-            max_retries: Максимальное количество попыток retry (дефолт: 3).
+            api_key: MRR API key.
+            api_secret: MRR API secret.
+            connect_timeout: Connection timeout in seconds (default: 30.0).
+            read_timeout: Read timeout in seconds (default: 60.0).
+            max_retries: Maximum number of retry attempts (default: 3).
         """
         self._api_key = api_key
         self._api_secret = api_secret
@@ -100,7 +100,7 @@ class MRRClient:
         """Async context manager entry.
 
         Returns:
-            MRRClient: Сам клиент для использования в async with.
+            MRRClient: The client instance for use in async with.
         """
         return self
 
@@ -112,26 +112,26 @@ class MRRClient:
     ) -> None:
         """Async context manager exit.
 
-        Закрывает HTTP-сессию при выходе из контекста.
+        Closes the HTTP session when exiting the context.
 
         Args:
-            exc_type: Тип исключения если произошло.
-            exc_val: Значение исключения если произошло.
-            exc_tb: Stack trace если произошло.
+            exc_type: Exception type if one occurred.
+            exc_val: Exception value if one occurred.
+            exc_tb: Stack trace if one occurred.
         """
         await self._http_client.close()
 
     async def whoami(self) -> MRRResponse[dict[str, str]]:
-        """Получает информацию о текущем пользователе.
+        """Retrieves information about the current user.
 
-        Выполняет GET запрос к /whoami endpoint для получения
-        информации о аутентифицированном пользователе.
+        Performs a GET request to the /whoami endpoint to obtain
+        information about the authenticated user.
 
         Returns:
-            MRRResponse[dict] — ответ с информацией о пользователе:
-            - success: True если запрос успешен
-            - data: Словарь с полями userid и username
-            - error: Информация об ошибке если success=False
+            MRRResponse[dict] — response with user information:
+            - success: True if the request succeeded
+            - data: Dictionary with userid and username fields
+            - error: Error information if success=False
 
         Example:
             >>> response = await client.whoami()

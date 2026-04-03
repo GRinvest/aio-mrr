@@ -1,21 +1,21 @@
-"""Rig Client для взаимодействия с Rig API.
+"""Rig Client for interacting with the Rig API.
 
-Этот модуль предоставляет RigClient для работы с Rig API endpoints:
-- GET /rig — Поиск rig'ов по алгоритму
-- GET /rig/mine — Список ваших rig'ов
-- GET /rig/{ids} — Получение rig'ов по ID
-- PUT /rig — Создание нового rig
-- POST /rig/batch — Пакетное обновление rig'ов
-- DELETE /rig/{ids} — Удаление rig'ов
-- PUT /rig/{ids}/extend — Продление аренды rig'а
-- POST /rig/batch/extend — Пакетное продление аренды
-- PUT /rig/{ids}/profile — Применение профиля пула к rig'ам
-- GET /rig/{ids}/pool — Получение пулов, назначенных rig'ам
-- PUT /rig/{ids}/pool — Добавление или замена пула на rig'ах
-- DELETE /rig/{ids}/pool — Удаление пула с rig'ов
-- GET /rig/{ids}/port — Получение прямого номера порта
-- GET /rig/{ids}/threads — Получение списка активных threads
-- GET /rig/{ids}/graph — Получение графических данных rig'а
+This module provides RigClient for working with Rig API endpoints:
+- GET /rig — Search rigs by algorithm
+- GET /rig/mine — List your rigs
+- GET /rig/{ids} — Get rigs by ID
+- PUT /rig — Create new rig
+- POST /rig/batch — Batch update rigs
+- DELETE /rig/{ids} — Delete rigs
+- PUT /rig/{ids}/extend — Extend rig rental
+- POST /rig/batch/extend — Batch extend rentals
+- PUT /rig/{ids}/profile — Apply pool profile to rigs
+- GET /rig/{ids}/pool — Get pools assigned to rigs
+- PUT /rig/{ids}/pool — Add or replace pool on rigs
+- DELETE /rig/{ids}/pool — Remove pool from rigs
+- GET /rig/{ids}/port — Get direct port number
+- GET /rig/{ids}/threads — Get list of active threads
+- GET /rig/{ids}/graph — Get rig graph data
 """
 
 from __future__ import annotations
@@ -30,16 +30,16 @@ from aio_mrr.subclients.base import BaseSubClient
 
 
 class RigClient(BaseSubClient):
-    """Client для работы с Rig API.
+    """Client for working with the Rig API.
 
-    Предоставляет методы для управления майнинг-установками (rigs):
-    - поиск и фильтрация rig'ов
-    - создание и удаление rig'ов
-    - продление аренды
-    - управление пулами и профилями
-    - получение статистики и графических данных
+    Provides methods for managing mining rigs:
+    - searching and filtering rigs
+    - creating and deleting rigs
+    - extending rentals
+    - managing pools and profiles
+    - retrieving statistics and graph data
 
-    Пример использования:
+    Usage example:
         >>> async with MRRClient(api_key="key", api_secret="secret") as client:
         ...     response = await client.rig_client.search_rigs(type="scrypt")
         ...     if response.success:
@@ -47,10 +47,10 @@ class RigClient(BaseSubClient):
     """
 
     def __init__(self, http_client: HTTPClient) -> None:
-        """Инициализирует RigClient.
+        """Initializes RigClient.
 
         Args:
-            http_client: Экземпляр HTTPClient для выполнения запросов.
+            http_client: HTTPClient instance for performing requests.
         """
         super().__init__(http_client)
 
@@ -81,40 +81,40 @@ class RigClient(BaseSubClient):
         orderby: str | None = None,
         orderdir: str | None = None,
     ) -> MRRResponse[list[RigInfo]]:
-        """Ищет rig'ы по алгоритму с фильтрацией и сортировкой.
+        """Searches rigs by algorithm with filtering and sorting.
 
-        Аналогично основной странице списка rig'ов на сайте MRR.
+        Equivalent to the main rig listing page on the MRR website.
 
         Args:
-            type: Алгоритм: sha256, scrypt, x11 и т.д. (обязательное).
-            currency: Валюта: [BTC,LTC,ETH,DOGE,BCH]. По умолчанию BTC.
-            minhours_min: Минимальное количество часов.
-            minhours_max: Максимальное количество часов.
-            maxhours_min: Минимальное максимальное время.
-            maxhours_max: Максимальное максимальное время.
-            rpi_min: Минимальный RPI (0-100).
-            rpi_max: Максимальный RPI (0-100).
-            hash_min: Минимальный хешрейт.
-            hash_max: Максимальный хешрейт.
-            hash_type: Тип: [hash,kh,mh,gh,th,ph,eh]. По умолчанию mh.
-            price_min: Минимальная цена.
-            price_max: Максимальная цена.
-            price_type: Тип хеша для цены.
-            offline: Показывать оффлайн rig'и. По умолчанию false.
-            rented: Показывать арендованные. По умолчанию false.
-            region_type: 'include' или 'exclude'.
-            expdiff: Ожидаемая сложность worker.
-            count: Количество результатов (макс. 100). По умолчанию 100.
-            islive: Фильтр по rig'ам с хешрейтом [yes].
-            xnonce: Фильтр по xnonce [yes,no].
-            offset: Смещение пагинации. По умолчанию 0.
-            orderby: Сортировка. По умолчанию score.
-            orderdir: Направление [asc,desc]. По умолчанию asc.
+            type: Algorithm: sha256, scrypt, x11, etc. (required).
+            currency: Currency: [BTC,LTC,ETH,DOGE,BCH]. Default BTC.
+            minhours_min: Minimum hours.
+            minhours_max: Maximum hours.
+            maxhours_min: Minimum maximum time.
+            maxhours_max: Maximum maximum time.
+            rpi_min: Minimum RPI (0-100).
+            rpi_max: Maximum RPI (0-100).
+            hash_min: Minimum hashrate.
+            hash_max: Maximum hashrate.
+            hash_type: Type: [hash,kh,mh,gh,th,ph,eh]. Default mh.
+            price_min: Minimum price.
+            price_max: Maximum price.
+            price_type: Hash type for price.
+            offline: Show offline rigs. Default false.
+            rented: Show rented. Default false.
+            region_type: 'include' or 'exclude'.
+            expdiff: Expected worker difficulty.
+            count: Number of results (max. 100). Default 100.
+            islive: Filter for rigs with hashrate [yes].
+            xnonce: Filter by xnonce [yes,no].
+            offset: Pagination offset. Default 0.
+            orderby: Sorting. Default score.
+            orderdir: Direction [asc,desc]. Default asc.
 
         Returns:
-            MRRResponse[list[RigInfo]] — ответ со списком rig'ов:
-            - При успехе: MRRResponse(success=True, data=[RigInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RigInfo]] — response with rig list:
+            - On success: MRRResponse(success=True, data=[RigInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.search_rigs(type="scrypt", orderby="price", orderdir="asc")
@@ -194,16 +194,16 @@ class RigClient(BaseSubClient):
     async def get_mining_rigs(
         self, type: str | None = None, hashrate: bool | None = None
     ) -> MRRResponse[list[RigInfo]]:
-        """Получает список ваших rig'ов.
+        """Retrieves the list of your rigs.
 
         Args:
-            type: Фильтр по алгоритму.
-            hashrate: Показывать расчёт хешрейта.
+            type: Filter by algorithm.
+            hashrate: Show hashrate calculation.
 
         Returns:
-            MRRResponse[list[RigInfo]] — ответ со списком ваших rig'ов:
-            - При успехе: MRRResponse(success=True, data=[RigInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RigInfo]] — response with your rig list:
+            - On success: MRRResponse(success=True, data=[RigInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.get_mining_rigs(type="scrypt", hashrate=True)
@@ -234,16 +234,16 @@ class RigClient(BaseSubClient):
         return result
 
     async def get_rigs(self, ids: list[int], fields: list[str] | None = None) -> MRRResponse[list[RigInfo]]:
-        """Получает один или несколько rig'ов по ID.
+        """Retrieves one or more rigs by ID.
 
         Args:
-            ids: Список ID rig'ов для получения.
-            fields: Фильтр полей root level (например, ["name", "status"]).
+            ids: List of rig IDs to retrieve.
+            fields: Filter root level fields (e.g., ["name", "status"]).
 
         Returns:
-            MRRResponse[list[RigInfo]] — ответ со списком rig'ов:
-            - При успехе: MRRResponse(success=True, data=[RigInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RigInfo]] — response with rig list:
+            - On success: MRRResponse(success=True, data=[RigInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.get_rigs(ids=[12345, 12346])
@@ -251,7 +251,7 @@ class RigClient(BaseSubClient):
             ...     for rig in response.data:
             ...         print(f"{rig.id}: {rig.name}")
         """
-        # Формируем ID строку: "12345;12346;12347"
+        # Form the ID string: "12345;12346;12347"
         ids_str = ";".join(str(rig_id) for rig_id in ids)
         endpoint = f"/rig/{ids_str}"
         params: dict[str, Any] = {}
@@ -275,15 +275,15 @@ class RigClient(BaseSubClient):
         return result
 
     async def create_rig(self, body: RigCreateBody) -> MRRResponse[dict[str, Any]]:
-        """Создаёт новый rig.
+        """Creates a new rig.
 
         Args:
-            body: Тело запроса с параметрами создания rig.
+            body: Request body with rig creation parameters.
 
         Returns:
-            MRRResponse[dict] — ответ с ID созданного rig:
-            - При успехе: MRRResponse(success=True, data={"id": 12345})
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[dict] — response with created rig ID:
+            - On success: MRRResponse(success=True, data={"id": 12345})
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = RigCreateBody(
@@ -312,15 +312,15 @@ class RigClient(BaseSubClient):
         return result
 
     async def batch_update_rigs(self, body: RigBatchBody) -> MRRResponse[None]:
-        """Обновляет пакет rig'ов.
+        """Batch updates rigs.
 
         Args:
-            body: Тело запроса со списком rig'ов для обновления.
+            body: Request body with list of rigs to update.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = RigBatchBody(rigs=[{"id": 12345, "name": "Updated Name"}])
@@ -345,15 +345,15 @@ class RigClient(BaseSubClient):
         return result
 
     async def delete_rigs(self, ids: list[int]) -> MRRResponse[None]:
-        """Удаляет один или несколько rig'ов по ID.
+        """Deletes one or more rigs by ID.
 
         Args:
-            ids: Список ID rig'ов для удаления.
+            ids: List of rig IDs to delete.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.delete_rigs(ids=[12345, 12346])
@@ -379,17 +379,17 @@ class RigClient(BaseSubClient):
     async def extend_rigs(
         self, ids: list[int], hours: float | None = None, minutes: float | None = None
     ) -> MRRResponse[None]:
-        """Продлевает аренду rig'а (для владельцев).
+        """Extends rig rental (for owners).
 
         Args:
-            ids: Список ID rig'ов для продления.
-            hours: Часы для продления.
-            minutes: Минуты для продления.
+            ids: List of rig IDs to extend.
+            hours: Hours to extend.
+            minutes: Minutes to extend.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.extend_rigs(ids=[12345], hours=24)
@@ -419,15 +419,15 @@ class RigClient(BaseSubClient):
         return result
 
     async def batch_extend_rigs(self, rig_hours: dict[int, float]) -> MRRResponse[None]:
-        """Пакетное продление аренды для нескольких rig'ов.
+        """Batch extends rentals for multiple rigs.
 
         Args:
-            rig_hours: Словарь {rig_id: hours} для продления.
+            rig_hours: Dictionary {rig_id: hours} for extension.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.batch_extend_rigs({12345: 24, 12346: 48})
@@ -451,16 +451,16 @@ class RigClient(BaseSubClient):
         return result
 
     async def update_rig_profile(self, ids: list[int], profile: int) -> MRRResponse[None]:
-        """Применяет профиль пула к одному или нескольким rig'ам.
+        """Applies a pool profile to one or more rigs.
 
         Args:
-            ids: Список ID rig'ов для обновления.
-            profile: ID профиля для применения.
+            ids: List of rig IDs to update.
+            profile: Profile ID to apply.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.update_rig_profile(ids=[12345], profile=678)
@@ -485,15 +485,15 @@ class RigClient(BaseSubClient):
         return result
 
     async def get_rig_pools(self, ids: list[int]) -> MRRResponse[list[Pool]]:
-        """Получает пулы, назначенные rig'ам.
+        """Retrieves pools assigned to rigs.
 
         Args:
-            ids: Список ID rig'ов для получения пулов.
+            ids: List of rig IDs to get pools for.
 
         Returns:
-            MRRResponse[list[Pool]] — ответ со списком пулов:
-            - При успехе: MRRResponse(success=True, data=[Pool, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[Pool]] — response with pool list:
+            - On success: MRRResponse(success=True, data=[Pool, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.get_rig_pools(ids=[12345])
@@ -520,16 +520,16 @@ class RigClient(BaseSubClient):
         return result
 
     async def update_rig_pool(self, ids: list[int], body: RigPoolBody) -> MRRResponse[None]:
-        """Добавляет или заменяет пул на rig'ах.
+        """Adds or replaces a pool on rigs.
 
         Args:
-            ids: Список ID rig'ов для обновления.
-            body: Тело запроса с данными пула.
+            ids: List of rig IDs to update.
+            body: Request body with pool data.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = RigPoolBody(
@@ -561,17 +561,17 @@ class RigClient(BaseSubClient):
         return result
 
     async def delete_rig_pool(self, ids: list[int]) -> MRRResponse[None]:
-        """Удаляет пул с rig'ов.
+        """Removes a pool from rigs.
 
-        Удаляет пул с указанным приоритетом с rig'ов.
+        Removes the pool with the specified priority from rigs.
 
         Args:
-            ids: Список ID rig'ов для удаления пула.
+            ids: List of rig IDs to remove the pool from.
 
         Returns:
-            MRRResponse[None] — ответ:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.delete_rig_pool(ids=[12345])
@@ -595,15 +595,15 @@ class RigClient(BaseSubClient):
         return result
 
     async def get_rig_ports(self, ids: list[int]) -> MRRResponse[RigPortInfo]:
-        """Получает прямой номер порта для подключения к серверу.
+        """Retrieves direct port number for server connection.
 
         Args:
-            ids: Список ID rig'ов (используется первый ID).
+            ids: List of rig IDs (first ID is used).
 
         Returns:
-            MRRResponse[RigPortInfo] — ответ с информацией о порте:
-            - При успехе: MRRResponse(success=True, data=RigPortInfo)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[RigPortInfo] — response with port information:
+            - On success: MRRResponse(success=True, data=RigPortInfo)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.get_rig_ports(ids=[12345])
@@ -629,15 +629,15 @@ class RigClient(BaseSubClient):
         return result
 
     async def get_rig_threads(self, ids: list[int]) -> MRRResponse[list[RigThreadInfo]]:
-        """Получает список активных threads для rig'ов.
+        """Retrieves list of active threads for rigs.
 
         Args:
-            ids: Список ID rig'ов для получения threads.
+            ids: List of rig IDs to get threads for.
 
         Returns:
-            MRRResponse[list[RigThreadInfo]] — ответ со списком threads:
-            - При успехе: MRRResponse(success=True, data=[RigThreadInfo, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[RigThreadInfo]] — response with thread list:
+            - On success: MRRResponse(success=True, data=[RigThreadInfo, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.get_rig_threads(ids=[12345])
@@ -666,17 +666,17 @@ class RigClient(BaseSubClient):
     async def get_rig_graph(
         self, ids: list[int], hours: float | None = None, deflate: bool | None = None
     ) -> MRRResponse[RigGraphData]:
-        """Получает графические данные rig'а (исторический хешрейт, простои).
+        """Retrieves rig graph data (historical hashrate, downtimes).
 
         Args:
-            ids: Список ID rig'ов (используется первый ID).
-            hours: Часы данных (макс. 2 недели). По умолчанию 168.
-            deflate: Base64 кодирование. По умолчанию false.
+            ids: List of rig IDs (first ID is used).
+            hours: Hours of data (max. 2 weeks). Default 168.
+            deflate: Base64 encoding. Default false.
 
         Returns:
-            MRRResponse[RigGraphData] — ответ с графическими данными:
-            - При успехе: MRRResponse(success=True, data=RigGraphData)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[RigGraphData] — response with graph data:
+            - On success: MRRResponse(success=True, data=RigGraphData)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await rig_client.get_rig_graph(ids=[12345], hours=24)

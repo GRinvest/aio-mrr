@@ -1,6 +1,6 @@
-"""Request модели для Account API.
+"""Request models for Account API.
 
-Этот модуль содержит модели для query параметров и body запросов к Account API.
+This module contains models for query parameters and request bodies for the Account API.
 """
 
 from pydantic import ConfigDict, Field
@@ -9,97 +9,97 @@ from aio_mrr.models.base import BaseMRRModel
 
 
 class TransactionsQueryParams(BaseMRRModel):
-    """Query параметры для GET /account/transactions.
+    """Query parameters for GET /account/transactions.
 
-    Используется для получения и фильтрации истории транзакций.
+    Used to retrieve and filter transaction history.
 
     Attributes:
-        start: Старт пагинации. По умолчанию 0.
-        limit: Лимит записей. По умолчанию 100.
-        algo: Фильтр по алгоритму.
-        type: Тип транзакции (credit, payout, referral, deposit, payment,
+        start: Pagination start. Default 0.
+        limit: Record limit. Default 100.
+        algo: Filter by algorithm.
+        type: Transaction type (credit, payout, referral, deposit, payment,
               credit/refund, debit/refund, rental fee).
-        rig: Фильтр по rig ID.
-        rental: Фильтр по rental ID.
-        txid: Фильтр по txid.
-        time_greater_eq: Время >= (Unix timestamp).
-        time_less_eq: Время <= (Unix timestamp).
+        rig: Filter by rig ID.
+        rental: Filter by rental ID.
+        txid: Filter by txid.
+        time_greater_eq: Time >= (Unix timestamp).
+        time_less_eq: Time <= (Unix timestamp).
     """
 
-    start: int | None = Field(default=None, description="Старт пагинации")
-    limit: int | None = Field(default=None, description="Лимит записей")
-    algo: str | None = Field(default=None, description="Фильтр по алгоритму")
-    type: str | None = Field(default=None, description="Тип транзакции")
-    rig: int | None = Field(default=None, description="Фильтр по rig ID")
-    rental: int | None = Field(default=None, description="Фильтр по rental ID")
-    txid: str | None = Field(default=None, description="Фильтр по txid")
-    time_greater_eq: str | None = Field(default=None, description="Время >= (Unix timestamp)")
-    time_less_eq: str | None = Field(default=None, description="Время <= (Unix timestamp)")
+    start: int | None = Field(default=None, description="Pagination start")
+    limit: int | None = Field(default=None, description="Record limit")
+    algo: str | None = Field(default=None, description="Filter by algorithm")
+    type: str | None = Field(default=None, description="Transaction type")
+    rig: int | None = Field(default=None, description="Filter by rig ID")
+    rental: int | None = Field(default=None, description="Filter by rental ID")
+    txid: str | None = Field(default=None, description="Filter by txid")
+    time_greater_eq: str | None = Field(default=None, description="Time >= (Unix timestamp)")
+    time_less_eq: str | None = Field(default=None, description="Time <= (Unix timestamp)")
 
 
 class ProfileCreateBody(BaseMRRModel):
-    """Body запроса для PUT /account/profile.
+    """Request body for PUT /account/profile.
 
-    Используется для создания нового профиля пула.
+    Used to create a new pool profile.
 
     Attributes:
-        name: Название профиля (обязательное).
-        algo: Алгоритм профиля (обязательное).
+        name: Profile name (required).
+        algo: Profile algorithm (required).
     """
 
-    name: str = Field(..., description="Название профиля")
-    algo: str = Field(..., description="Алгоритм профиля")
+    name: str = Field(..., description="Profile name")
+    algo: str = Field(..., description="Profile algorithm")
 
 
 class PoolTestBody(BaseMRRModel):
-    """Body запроса для PUT /account/pools/test.
+    """Request body for PUT /account/pools/test.
 
-    Используется для тестирования подключения к пулу.
+    Used to test pool connection.
 
     Attributes:
-        method: Метод теста (simple или full).
-        extramethod: Для ethhash: [esm0,esm1,esm2,esm3]. По умолчанию esm0.
-        type: Алгоритм (scrypt, sha256, x11). Требуется для full метода.
-        host: Хост пула (может включать порт).
-        port: Порт пула. Требуется если нет в host.
-        user: Имя пользователя. Требуется для full метода.
-        pass: Пароль. Требуется для full метода.
-        source: Сервер MRR для теста. По умолчанию us-central01.
+        method: Test method (simple or full).
+        extramethod: For ethhash: [esm0,esm1,esm2,esm3]. Default esm0.
+        type: Algorithm (scrypt, sha256, x11). Required for full method.
+        host: Pool host (may include port).
+        port: Pool port. Required if not in host.
+        user: Username. Required for full method.
+        pass: Password. Required for full method.
+        source: MRR server for testing. Default us-central01.
     """
 
     model_config = ConfigDict(extra="ignore", populate_by_name=True)
 
-    method: str = Field(..., description="Метод теста (simple или full)")
-    extramethod: str | None = Field(default=None, description="Для ethhash: [esm0,esm1,esm2,esm3]")
-    type: str | None = Field(default=None, description="Алгоритм (для full метода)")
-    host: str | None = Field(default=None, description="Хост пула")
-    port: int | None = Field(default=None, description="Порт пула")
-    user: str | None = Field(default=None, description="Имя пользователя")
-    password: str | None = Field(default=None, alias="pass", description="Пароль")
-    source: str | None = Field(default=None, description="Сервер MRR для теста")
+    method: str = Field(..., description="Test method (simple or full)")
+    extramethod: str | None = Field(default=None, description="For ethhash: [esm0,esm1,esm2,esm3]")
+    type: str | None = Field(default=None, description="Algorithm (for full method)")
+    host: str | None = Field(default=None, description="Pool host")
+    port: int | None = Field(default=None, description="Pool port")
+    user: str | None = Field(default=None, description="Username")
+    password: str | None = Field(default=None, alias="pass", description="Password")
+    source: str | None = Field(default=None, description="MRR server for testing")
 
 
 class PoolCreateBody(BaseMRRModel):
-    """Body запроса для PUT /account/pool.
+    """Request body for PUT /account/pool.
 
-    Используется для создания сохранённого пула.
+    Used to create a saved pool.
 
     Attributes:
-        type: Алгоритм (sha256, scrypt, x11 и т.д.) (обязательное).
-        name: Название для идентификации (обязательное).
-        host: Хост пула (обязательное).
-        port: Порт пула (обязательное).
-        user: Имя worker (обязательное).
-        pass: Пароль worker (опциональное).
-        notes: Заметки (опциональное).
+        type: Algorithm (sha256, scrypt, x11, etc.) (required).
+        name: Name for identification (required).
+        host: Pool host (required).
+        port: Pool port (required).
+        user: Worker name (required).
+        pass: Worker password (optional).
+        notes: Notes (optional).
     """
 
     model_config = ConfigDict(extra="ignore", populate_by_name=True)
 
-    type: str = Field(..., description="Алгоритм пула")
-    name: str = Field(..., description="Название пула")
-    host: str = Field(..., description="Хост пула")
-    port: int = Field(..., description="Порт пула")
-    user: str = Field(..., description="Имя worker")
-    password: str | None = Field(default=None, alias="pass", description="Пароль worker")
-    notes: str | None = Field(default=None, description="Заметки")
+    type: str = Field(..., description="Pool algorithm")
+    name: str = Field(..., description="Pool name")
+    host: str = Field(..., description="Pool host")
+    port: int = Field(..., description="Pool port")
+    user: str = Field(..., description="Worker name")
+    password: str | None = Field(default=None, alias="pass", description="Worker password")
+    notes: str | None = Field(default=None, description="Notes")

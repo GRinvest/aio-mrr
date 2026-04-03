@@ -1,6 +1,6 @@
-"""Request модели для Rental API.
+"""Request models for Rental API.
 
-Этот модуль содержит модели для query параметров и body запросов к Rental API.
+This module contains models for query parameters and request bodies for the Rental API.
 """
 
 from pydantic import ConfigDict, Field
@@ -9,82 +9,82 @@ from aio_mrr.models.base import BaseMRRModel
 
 
 class RentalListQueryParams(BaseMRRModel):
-    """Query параметры для GET /rental.
+    """Query parameters for GET /rental.
 
-    Используется для получения списка аренд с фильтрацией и пагинацией.
+    Used to retrieve a list of rentals with filtering and pagination.
 
     Attributes:
-        type: Тип аренды - 'owner' или 'renter'. По умолчанию 'renter'.
-        algo: Фильтр по алгоритму.
-        history: true = завершённые, false = активные. По умолчанию false.
-        rig: Фильтр по rig ID.
-        start: Старт пагинации. По умолчанию 0.
-        limit: Лимит пагинации. По умолчанию 25.
-        currency: Валюта - [BTC,LTC,ETH,DOGE,BCH].
+        type: Rental type - 'owner' or 'renter'. Default 'renter'.
+        algo: Filter by algorithm.
+        history: true = completed, false = active. Default false.
+        rig: Filter by rig ID.
+        start: Pagination start. Default 0.
+        limit: Pagination limit. Default 25.
+        currency: Currency - [BTC,LTC,ETH,DOGE,BCH].
     """
 
-    type: str | None = Field(default=None, description="Тип аренды - 'owner' или 'renter'")
-    algo: str | None = Field(default=None, description="Фильтр по алгоритму")
-    history: bool | None = Field(default=None, description="true = завершённые, false = активные")
-    rig: int | None = Field(default=None, description="Фильтр по rig ID")
-    start: int | None = Field(default=None, description="Старт пагинации")
-    limit: int | None = Field(default=None, description="Лимит пагинации")
-    currency: str | None = Field(default=None, description="Валюта - [BTC,LTC,ETH,DOGE,BCH]")
+    type: str | None = Field(default=None, description="Rental type - 'owner' or 'renter'")
+    algo: str | None = Field(default=None, description="Filter by algorithm")
+    history: bool | None = Field(default=None, description="true = completed, false = active")
+    rig: int | None = Field(default=None, description="Filter by rig ID")
+    start: int | None = Field(default=None, description="Pagination start")
+    limit: int | None = Field(default=None, description="Pagination limit")
+    currency: str | None = Field(default=None, description="Currency - [BTC,LTC,ETH,DOGE,BCH]")
 
 
 class RentalCreateBody(BaseMRRModel):
-    """Body запроса для PUT /rental.
+    """Request body for PUT /rental.
 
-    Используется для создания новой аренды.
+    Used to create a new rental.
 
     Attributes:
-        rig: ID rig для аренды (обязательное).
-        length: Длительность в часах (обязательное).
-        profile: ID профиля пула (обязательное).
-        currency: Валюта оплаты. По умолчанию BTC.
-        rate_type: Тип хеша. По умолчанию 'mh'.
-        rate_price: Цена за единицу хеша в день.
+        rig: Rig ID for rental (required).
+        length: Duration in hours (required).
+        profile: Pool profile ID (required).
+        currency: Payment currency. Default BTC.
+        rate_type: Hash type. Default 'mh'.
+        rate_price: Price per hash unit per day.
     """
 
     model_config = ConfigDict(populate_by_name=True)
 
-    rig: int = Field(..., description="ID rig для аренды")
-    length: float = Field(..., description="Длительность в часах")
-    profile: int = Field(..., description="ID профиля пула")
-    currency: str | None = Field(default=None, description="Валюта оплаты")
-    rate_type: str | None = Field(default=None, alias="rate.type", description="Тип хеша")
-    rate_price: float | None = Field(default=None, alias="rate.price", description="Цена за единицу хеша в день")
+    rig: int = Field(..., description="Rig ID for rental")
+    length: float = Field(..., description="Duration in hours")
+    profile: int = Field(..., description="Pool profile ID")
+    currency: str | None = Field(default=None, description="Payment currency")
+    rate_type: str | None = Field(default=None, alias="rate.type", description="Hash type")
+    rate_price: float | None = Field(default=None, alias="rate.price", description="Price per hash unit per day")
 
 
 class RentalExtendBody(BaseMRRModel):
-    """Body запроса для PUT /rental/{ids}/extend.
+    """Request body for PUT /rental/{ids}/extend.
 
-    Используется для продления аренды.
+    Used to extend a rental.
 
     Attributes:
-        length: Часы для продления (обязательное).
-        getcost: Если установлено, симулирует продление и возвращает стоимость.
+        length: Hours to extend (required).
+        getcost: If set, simulates extension and returns cost.
     """
 
-    length: float = Field(..., description="Часы для продления")
-    getcost: bool | None = Field(default=None, description="Симулировать продление и вернуть стоимость")
+    length: float = Field(..., description="Hours to extend")
+    getcost: bool | None = Field(default=None, description="Simulate extension and return cost")
 
 
 class RentalPoolBody(BaseMRRModel):
-    """Body запроса для PUT /rental/{ids}/pool.
+    """Request body for PUT /rental/{ids}/pool.
 
-    Используется для добавления или замены пула на арендах.
+    Used to add or replace a pool on rentals.
 
     Attributes:
-        host: Хост пула (обязательное).
-        port: Порт пула (обязательное).
-        user: Имя worker (обязательное).
-        pass: Пароль worker (обязательное).
-        priority: Приоритет (0-4).
+        host: Pool host (required).
+        port: Pool port (required).
+        user: Worker name (required).
+        pass: Worker password (required).
+        priority: Priority (0-4).
     """
 
-    host: str = Field(..., description="Хост пула")
-    port: int = Field(..., description="Порт пула")
-    user: str = Field(..., description="Имя worker")
-    password: str = Field(..., alias="pass", description="Пароль worker")
-    priority: int | None = Field(default=None, description="Приоритет (0-4)")
+    host: str = Field(..., description="Pool host")
+    port: int = Field(..., description="Pool port")
+    user: str = Field(..., description="Worker name")
+    password: str = Field(..., alias="pass", description="Worker password")
+    priority: int | None = Field(default=None, description="Priority (0-4)")

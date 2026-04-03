@@ -1,8 +1,8 @@
-"""Модуль аутентификации для MRR API.
+"""Authentication module for MRR API.
 
-Этот модуль содержит компоненты для HMAC-аутентификации:
-- NonceGenerator: thread-safe генератор монотонных nonce
-- AuthSigner: генератор HMAC SHA1 подписей (реализуется в шаге 4)
+This module contains components for HMAC authentication:
+- NonceGenerator: thread-safe monotonic nonce generator
+- AuthSigner: HMAC SHA1 signature generator (implemented in step 4)
 """
 
 from aio_mrr.auth.nonce import NonceGenerator

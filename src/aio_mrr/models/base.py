@@ -1,12 +1,12 @@
-"""Базовые Pydantic-модели для библиотеки aio-mrr.
+"""Base Pydantic models for the aio-mrr library.
 
-Этот модуль содержит:
-- Базовый класс BaseModel с extra='ignore' для устойчивости к изменениям API MRR.
-- MRRResponseError - модель для деталей ошибки.
-- MRRResponse - универсальный generic Result-объект для ответов API.
+This module contains:
+- Base BaseModel class with extra='ignore' for resilience to MRR API changes.
+- MRRResponseError - model for error details.
+- MRRResponse - universal generic Result object for API responses.
 
-Автор: GRinvest / SibNeuroTech
-Лицензия: MIT
+Author: GRinvest / SibNeuroTech
+License: MIT
 """
 
 from __future__ import annotations
@@ -17,24 +17,24 @@ T = TypeVar("T")
 
 
 class BaseMRRModel(BaseModel):
-    """Базовая модель для всех моделей aio-mrr.
+    """Base model for all aio-mrr models.
 
-    Использует extra='ignore' для устойчивости к изменениям API MRR (BETA).
-    Все модели наследуются от этого класса.
+    Uses extra='ignore' for resilience to MRR API changes (BETA).
+    All models inherit from this class.
     """
 
     model_config = ConfigDict(extra="ignore")
 
 
 class MRRResponseError(BaseMRRModel):
-    """Детали ошибки в ответе API.
+    """Error details in API response.
 
     Attributes:
-        code: Код ошибки (например, "network_error", "api_error",
+        code: Error code (e.g., "network_error", "api_error",
               "validation_error", "timeout").
-        message: Человекочитаемое описание ошибки.
-        details: Дополнительные данные об ошибке (опционально).
-        http_status: HTTP статус код если применимо (опционально).
+        message: Human-readable error description.
+        details: Additional error data (optional).
+        http_status: HTTP status code if applicable (optional).
     """
 
     code: str
@@ -44,16 +44,16 @@ class MRRResponseError(BaseMRRModel):
 
 
 class MRRResponse(BaseMRRModel, Generic[T]):
-    """Универсальный ответ библиотеки aio-mrr.
+    """Universal response from the aio-mrr library.
 
-    Обертка над ответами API MiningRigRentals с поддержкой типизации.
+    Wrapper around MiningRigRentals API responses with typing support.
 
     Attributes:
-        success: Флаг успешности запроса.
-        data: Данные ответа (опционально, зависит от успешности).
-        error: Детали ошибки при failure (опционально).
-        http_status: HTTP статус код ответа (опционально).
-        retry_count: Количество попыток retry (по умолчанию 0).
+        success: Flag indicating request success.
+        data: Response data (optional, depends on success).
+        error: Error details on failure (optional).
+        http_status: HTTP status code of the response (optional).
+        retry_count: Number of retry attempts (default 0).
     """
 
     success: bool

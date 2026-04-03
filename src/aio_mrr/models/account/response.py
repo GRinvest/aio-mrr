@@ -1,23 +1,23 @@
-"""Response модели для Account API.
+"""Response models for Account API.
 
-Этот модуль содержит модели для ответов от Account API.
+This module contains models for responses from the Account API.
 """
 
 from pydantic import ConfigDict, Field
 
 from aio_mrr.models.base import BaseMRRModel
 
-# --- Sub-models для AccountInfo ---
+# --- Sub-models for AccountInfo ---
 
 
 class WithdrawCurrencyInfo(BaseMRRModel):
-    """Информация о выводе средств для валюты.
+    """Withdrawal information for a currency.
 
     Attributes:
-        address: Адрес для вывода.
-        label: Метка адреса.
-        auto_pay_threshold: Порог автоматической выплаты.
-        txfee: Комиссия за транзакцию.
+        address: Withdrawal address.
+        label: Address label.
+        auto_pay_threshold: Auto-pay threshold.
+        txfee: Transaction fee.
     """
 
     address: str
@@ -27,24 +27,24 @@ class WithdrawCurrencyInfo(BaseMRRModel):
 
 
 class DepositCurrencyInfo(BaseMRRModel):
-    """Информация о депозите для валюты.
+    """Deposit information for a currency.
 
     Attributes:
-        address: Адрес для депозита.
+        address: Deposit address.
     """
 
     address: str
 
 
 class NotificationsInfo(BaseMRRModel):
-    """Информация о уведомлениях.
+    """Notification information.
 
     Attributes:
-        rental_comm: Уведомления об аренде.
-        new_rental: Уведомления о новой аренде.
-        offline: Уведомления об оффлайне.
-        news: Уведомления о новостях.
-        deposit: Уведомления о депозитах.
+        rental_comm: Rental communication notifications.
+        new_rental: New rental notifications.
+        offline: Offline notifications.
+        news: News notifications.
+        deposit: Deposit notifications.
     """
 
     rental_comm: str
@@ -55,12 +55,12 @@ class NotificationsInfo(BaseMRRModel):
 
 
 class SettingsInfo(BaseMRRModel):
-    """Информация о настройках аккаунта.
+    """Account settings information.
 
     Attributes:
-        live_data: Данные в реальном времени.
-        public_profile: Публичный профиль.
-        two_factor_auth: Двухфакторная аутентификация.
+        live_data: Real-time data.
+        public_profile: Public profile.
+        two_factor_auth: Two-factor authentication.
     """
 
     model_config = ConfigDict(populate_by_name=True)
@@ -76,21 +76,21 @@ class SettingsInfo(BaseMRRModel):
         super().__init__(**data)
 
 
-# --- Основные модели ---
+# --- Main models ---
 
 
 class AccountInfo(BaseMRRModel):
-    """Информация об аккаунте.
+    """Account information.
 
-    Ответ для GET /account.
+    Response for GET /account.
 
     Attributes:
-        username: Имя пользователя.
-        email: Email пользователя.
-        withdraw: Информация о выводе средств по валютам.
-        deposit: Информация о депозитах по валютам.
-        notifications: Информация об уведомлениях.
-        settings: Информация о настройках.
+        username: Username.
+        email: User email.
+        withdraw: Withdrawal information by currency.
+        deposit: Deposit information by currency.
+        notifications: Notification information.
+        settings: Settings information.
     """
 
     username: str
@@ -102,15 +102,15 @@ class AccountInfo(BaseMRRModel):
 
 
 class BalanceInfo(BaseMRRModel):
-    """Информация о балансе.
+    """Balance information.
 
-    Используется для ответа GET /account/balance.
-    Возвращается как Dict[str, BalanceInfo] по валютам.
+    Used for GET /account/balance response.
+    Returned as Dict[str, BalanceInfo] by currency.
 
     Attributes:
-        confirmed: Подтверждённый баланс.
-        pending: Ожидающий баланс.
-        unconfirmed: неподтверждённый баланс.
+        confirmed: Confirmed balance.
+        pending: Pending balance.
+        unconfirmed: Unconfirmed balance.
     """
 
     confirmed: str
@@ -119,30 +119,30 @@ class BalanceInfo(BaseMRRModel):
 
 
 class Transaction(BaseMRRModel):
-    """Информация о транзакции.
+    """Transaction information.
 
-    Используется для ответа GET /account/transactions.
+    Used for GET /account/transactions response.
 
     Attributes:
-        id: Идентификатор транзакции.
-        type: Тип транзакции.
-        currency: Валюта транзакции.
-        amount: Сумма (отрицательная для списаний).
-        when: Время транзакции (UTC).
-        rental: ID аренды (если применимо).
-        rig: ID рига (если применимо).
-        txid: ID транзакции в блокчейне (для Payout/Deposit).
-        txfee: Комиссия (только для Payout).
-        payout_address: Адрес выплаты (только для Payout).
-        sent: Статус отправки (только для Payout).
-        status: Статус транзакции (Cleared или Pending).
-        pending_seconds: Секунды ожидания (если Pending).
-        info: Дополнительная информация.
+        id: Transaction identifier.
+        type: Transaction type.
+        currency: Transaction currency.
+        amount: Amount (negative for debits).
+        when: Transaction time (UTC).
+        rental: Rental ID (if applicable).
+        rig: Rig ID (if applicable).
+        txid: Blockchain transaction ID (for Payout/Deposit).
+        txfee: Fee (only for Payout).
+        payout_address: Payout address (only for Payout).
+        sent: Send status (only for Payout).
+        status: Transaction status (Cleared or Pending).
+        pending_seconds: Seconds waiting (if Pending).
+        info: Additional information.
     """
 
     id: str
     type: str
-    currency: str | None = None  # Опциональное поле — документация противоречива
+    currency: str | None = None  # Optional field — documentation is contradictory
     amount: str | float
     when: str
     rental: str | None = None
@@ -157,16 +157,16 @@ class Transaction(BaseMRRModel):
 
 
 class TransactionsList(BaseMRRModel):
-    """Список транзакций.
+    """List of transactions.
 
-    Ответ для GET /account/transactions.
+    Response for GET /account/transactions.
 
     Attributes:
-        total: Общее количество транзакций.
-        returned: Количество возвращённых транзакций.
-        start: Старт пагинации.
-        limit: Лимит записей.
-        transactions: Список транзакций.
+        total: Total number of transactions.
+        returned: Number of returned transactions.
+        start: Pagination start.
+        limit: Record limit.
+        transactions: List of transactions.
     """
 
     total: str
@@ -176,16 +176,16 @@ class TransactionsList(BaseMRRModel):
     transactions: list[Transaction]
 
 
-# --- Sub-models для Profile ---
+# --- Sub-models for Profile ---
 
 
 class PriceInfo(BaseMRRModel):
-    """Информация о цене.
+    """Price information.
 
     Attributes:
-        amount: Значение цены.
-        currency: Валюта.
-        unit: Единица измерения.
+        amount: Price value.
+        currency: Currency.
+        unit: Unit of measurement.
     """
 
     amount: str
@@ -194,12 +194,12 @@ class PriceInfo(BaseMRRModel):
 
 
 class AlgoProfileInfo(BaseMRRModel):
-    """Информация об алгоритме профиля.
+    """Profile algorithm information.
 
     Attributes:
-        name: Название алгоритма.
-        display: Отображаемое название.
-        suggested_price: Рекомендуемая цена.
+        name: Algorithm name.
+        display: Display name.
+        suggested_price: Suggested price.
     """
 
     name: str
@@ -208,16 +208,16 @@ class AlgoProfileInfo(BaseMRRModel):
 
 
 class PoolProfileInfo(BaseMRRModel):
-    """Информация о пуле в профиле.
+    """Pool information in a profile.
 
     Attributes:
-        priority: Приоритет пула (0-4).
-        type: Тип/алгоритм пула.
-        host: Хост пула.
-        port: Порт пула.
-        user: Имя пользователя.
-        password: Пароль (в API называется 'pass').
-        status: Статус пула.
+        priority: Pool priority (0-4).
+        type: Pool type/algorithm.
+        host: Pool host.
+        port: Pool port.
+        user: Username.
+        password: Password (called 'pass' in API).
+        status: Pool status.
     """
 
     model_config = ConfigDict(populate_by_name=True)
@@ -232,17 +232,17 @@ class PoolProfileInfo(BaseMRRModel):
 
 
 class Profile(BaseMRRModel):
-    """Профиль пула.
+    """Pool profile.
 
-    Используется для ответов:
+    Used for responses:
     - GET /account/profile
     - GET /account/profile/{id}
 
     Attributes:
-        id: Идентификатор профиля.
-        name: Название профиля.
-        algo: Информация об алгоритме.
-        pools: Список пулов профиля.
+        id: Profile identifier.
+        name: Profile name.
+        algo: Algorithm information.
+        pools: List of profile pools.
     """
 
     id: str
@@ -251,27 +251,27 @@ class Profile(BaseMRRModel):
     pools: list[PoolProfileInfo] | None = None
 
 
-# --- Sub-models для PoolTestResult ---
+# --- Sub-models for PoolTestResult ---
 
 
 class PoolTestResultItem(BaseMRRModel):
-    """Результат теста подключения к пулу.
+    """Pool connection test result.
 
     Attributes:
-        source: Сервер MRR, с которого проводился тест.
-        dest: Целевой хост:порт пула.
-        error: Ошибка подключения (или "none").
-        connection: true если подключение успешно.
-        executiontime: Время выполнения теста в секундах.
-        protocol: Протокол (только для full теста).
-        sub: true если подписка успешна (только для full теста).
-        auth: true если авторизация принята (только для full теста).
-        red: true если пул отправляет reconnect (только для full теста).
-        diffs: true если пул установил сложность (только для full теста).
-        diff: Значение сложности (только для full теста).
-        work: true если получена работа (только для full теста).
-        xnonce: true если пул принимает extranonce (только для full теста).
-        ssl: true если SSL/TLS (только для full теста).
+        source: MRR server from which the test was conducted.
+        dest: Target pool host:port.
+        error: Connection error (or "none").
+        connection: true if connection successful.
+        executiontime: Test execution time in seconds.
+        protocol: Protocol (full test only).
+        sub: true if subscription successful (full test only).
+        auth: true if authorization accepted (full test only).
+        red: true if pool sends reconnect (full test only).
+        diffs: true if pool set difficulty (full test only).
+        diff: Difficulty value (full test only).
+        work: true if work received (full test only).
+        xnonce: true if pool accepts extranonce (full test only).
+        ssl: true if SSL/TLS (full test only).
     """
 
     source: str
@@ -291,28 +291,28 @@ class PoolTestResultItem(BaseMRRModel):
 
 
 class PoolTestResult(BaseMRRModel):
-    """Результат теста пула.
+    """Pool test result.
 
-    Ответ для PUT /account/pool/test.
+    Response for PUT /account/pool/test.
 
     Attributes:
-        result: Список результатов тестов подключения.
-        error: Список ошибок (обычно пустой).
+        result: List of connection test results.
+        error: List of errors (usually empty).
     """
 
     result: list[PoolTestResultItem]
     error: list[str]
 
 
-# --- Sub-models для Pool ---
+# --- Sub-models for Pool ---
 
 
 class AlgoPoolInfo(BaseMRRModel):
-    """Информация об алгоритме пула.
+    """Pool algorithm information.
 
     Attributes:
-        name: Название алгоритма.
-        display: Отображаемое название.
+        name: Algorithm name.
+        display: Display name.
     """
 
     name: str
@@ -320,23 +320,23 @@ class AlgoPoolInfo(BaseMRRModel):
 
 
 class Pool(BaseMRRModel):
-    """Информация о пуле.
+    """Pool information.
 
-    Используется для ответов:
+    Used for responses:
     - GET /account/pool
     - GET /account/pool/{ids}
     - GET /rig/{ids}/pool
 
     Attributes:
-        id: Идентификатор пула.
-        type: Тип/алгоритм пула.
-        name: Название пула.
-        host: Хост пула.
-        port: Порт пула.
-        user: Имя пользователя.
-        password: Пароль (в API называется 'pass').
-        notes: Заметки.
-        algo: Информация об алгоритме.
+        id: Pool identifier.
+        type: Pool type/algorithm.
+        name: Pool name.
+        host: Pool host.
+        port: Pool port.
+        user: Username.
+        password: Password (called 'pass' in API).
+        notes: Notes.
+        algo: Algorithm information.
     """
 
     model_config = ConfigDict(populate_by_name=True)
@@ -353,44 +353,44 @@ class Pool(BaseMRRModel):
 
 
 class PoolCreateResponse(BaseMRRModel):
-    """Ответ на создание пула.
+    """Pool creation response.
 
-    Ответ для PUT /account/pool.
+    Response for PUT /account/pool.
 
     Attributes:
-        id: ID созданного пула.
+        id: Created pool ID.
     """
 
     id: int
 
 
-# --- Sub-models для ProfileCreateResponse ---
+# --- Sub-models for ProfileCreateResponse ---
 
 
 class ProfileCreateResponse(BaseMRRModel):
-    """Ответ на создание профиля.
+    """Profile creation response.
 
-    Ответ для PUT /account/profile.
+    Response for PUT /account/profile.
 
     Attributes:
-        pid: ID созданного профиля.
+        pid: Created profile ID.
     """
 
     pid: str
 
 
-# --- Sub-models для ProfileDeleteResponse ---
+# --- Sub-models for ProfileDeleteResponse ---
 
 
 class ProfileDeleteResponse(BaseMRRModel):
-    """Ответ на удаление профиля.
+    """Profile deletion response.
 
-    Ответ для DELETE /account/profile/{id}.
+    Response for DELETE /account/profile/{id}.
 
     Attributes:
-        id: ID удалённого профиля.
-        success: Успешность удаления.
-        message: Сообщение о результате.
+        id: Deleted profile ID.
+        success: Deletion success.
+        message: Result message.
     """
 
     id: str
@@ -402,13 +402,13 @@ class ProfileDeleteResponse(BaseMRRModel):
 
 
 class CurrencyStatus(BaseMRRModel):
-    """Статус валюты для аккаунта.
+    """Currency status for account.
 
-    Используется для ответа GET /account/currencies.
+    Used for GET /account/currencies response.
 
     Attributes:
-        name: Название валюты (например, "BTC", "LTC").
-        enabled: Флаг доступности валюты для платежей.
+        name: Currency name (e.g., "BTC", "LTC").
+        enabled: Flag indicating currency availability for payments.
     """
 
     name: str

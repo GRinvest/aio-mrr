@@ -1,6 +1,6 @@
-"""Account Client для взаимодействия с Account API.
+"""Account Client for interacting with the Account API.
 
-Этот модуль предоставляет AccountClient для работы с Account API endpoints:
+This module provides AccountClient for working with Account API endpoints:
 - GET /account
 - GET /account/balance
 - GET /account/transactions
@@ -18,8 +18,8 @@
 - PUT /account/pool/test
 - GET /account/currencies
 
-> ⚠️ PUT /account/balance (вывод средств) — эндпоинт отключён на стороне MRR.
-  НЕ реализован.
+> Note: PUT /account/balance (withdrawal) — endpoint is disabled on the MRR side.
+  NOT implemented.
 """
 
 from __future__ import annotations
@@ -49,17 +49,17 @@ from aio_mrr.subclients.base import BaseSubClient
 
 
 class AccountClient(BaseSubClient):
-    """Client для работы с Account API.
+    """Client for working with the Account API.
 
-    Предоставляет методы для управления аккаунтом:
-    - получение информации об аккаунте и балансе
-    - управление транзакциями
-    - управление профилями пулов
-    - управление сохранёнными пулами
-    - тестирование подключения к пулам
-    - получение статуса валют
+    Provides methods for account management:
+    - retrieving account information and balance
+    - managing transactions
+    - managing pool profiles
+    - managing saved pools
+    - testing pool connections
+    - retrieving currency statuses
 
-    Пример использования:
+    Usage example:
         >>> async with MRRClient(api_key="key", api_secret="secret") as client:
         ...     response = await client.account.get_balance()
         ...     if response.success:
@@ -67,23 +67,23 @@ class AccountClient(BaseSubClient):
     """
 
     def __init__(self, http_client: HTTPClient) -> None:
-        """Инициализирует AccountClient.
+        """Initializes AccountClient.
 
         Args:
-            http_client: Экземпляр HTTPClient для выполнения запросов.
+            http_client: HTTPClient instance for performing requests.
         """
         super().__init__(http_client)
 
     async def get_account(self) -> MRRResponse[AccountInfo]:
-        """Получает информацию об аккаунте.
+        """Retrieves account information.
 
-        Возвращает детальную информацию об аккаунте пользователя, включая
-        адреса для депозитов и выводов, настройки уведомлений и параметры.
+        Returns detailed information about the user's account, including
+        deposit and withdrawal addresses, notification settings, and preferences.
 
         Returns:
-            MRRResponse[AccountInfo] — ответ с информацией об аккаунте:
-            - При успехе: MRRResponse(success=True, data=AccountInfo)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[AccountInfo] — response with account information:
+            - On success: MRRResponse(success=True, data=AccountInfo)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.get_account()
@@ -107,17 +107,17 @@ class AccountClient(BaseSubClient):
         return result
 
     async def get_balance(self) -> MRRResponse[dict[str, BalanceInfo]]:
-        """Получает балансы аккаунта по всем валютам.
+        """Retrieves account balances for all currencies.
 
-        Возвращает информацию о балансах по каждой валюте, включая
-        подтверждённые, ожидающие и неподтверждённые средства.
+        Returns balance information for each currency, including
+        confirmed, pending, and unconfirmed funds.
 
-        > ℹ️ Балансы обновляются в реальном времени при поступлениях.
+        > Note: Balances are updated in real-time upon deposits.
 
         Returns:
-            MRRResponse[dict[str, BalanceInfo]] — ответ с балансами по валютам:
-            - При успехе: MRRResponse(success=True, data={"BTC": BalanceInfo, ...})
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[dict[str, BalanceInfo]] — response with balances by currency:
+            - On success: MRRResponse(success=True, data={"BTC": BalanceInfo, ...})
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.get_balance()
@@ -142,19 +142,19 @@ class AccountClient(BaseSubClient):
         return result
 
     async def get_transactions(self, params: TransactionsQueryParams | None = None) -> MRRResponse[TransactionsList]:
-        """Получает историю транзакций аккаунта.
+        """Retrieves account transaction history.
 
-        Возвращает список транзакций с возможностью фильтрации по типу,
-        алгоритму, rig/rental ID и временному диапазону.
+        Returns a list of transactions with filtering by type,
+        algorithm, rig/rental ID, and time range.
 
         Args:
-            params: Query параметры для фильтрации транзакций.
-                   По умолчанию возвращает все транзакции (limit=100).
+            params: Query parameters for filtering transactions.
+                   Defaults to returning all transactions (limit=100).
 
         Returns:
-            MRRResponse[TransactionsList] — ответ со списком транзакций:
-            - При успехе: MRRResponse(success=True, data=TransactionsList)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[TransactionsList] — response with transaction list:
+            - On success: MRRResponse(success=True, data=TransactionsList)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> params = TransactionsQueryParams(type="credit", limit=10)
@@ -185,19 +185,19 @@ class AccountClient(BaseSubClient):
         return result
 
     async def get_profiles(self, algo: str | None = None) -> MRRResponse[list[Profile]]:
-        """Получает список профилей пулов.
+        """Retrieves the list of pool profiles.
 
-        Возвращает все сохранённые профили пулов или фильтрует по алгоритму.
-        Каждый профиль содержит информацию об алгоритме и список пулов с приоритетами.
+        Returns all saved pool profiles or filters by algorithm.
+        Each profile contains algorithm information and a list of pools with priorities.
 
         Args:
-            algo: Фильтр по алгоритму (например, "scrypt", "sha256").
-                 По умолчанию возвращает все профили.
+            algo: Filter by algorithm (e.g., "scrypt", "sha256").
+                 Defaults to returning all profiles.
 
         Returns:
-            MRRResponse[list[Profile]] — ответ со списком профилей:
-            - При успехе: MRRResponse(success=True, data=[Profile, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[Profile]] — response with profile list:
+            - On success: MRRResponse(success=True, data=[Profile, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.get_profiles(algo="scrypt")
@@ -227,18 +227,18 @@ class AccountClient(BaseSubClient):
         return result
 
     async def create_profile(self, body: ProfileCreateBody) -> MRRResponse[ProfileCreateResponse]:
-        """Создаёт новый профиль пула.
+        """Creates a new pool profile.
 
-        Создаёт новый профиль для указанного алгоритма майнинга. Профиль
-        может содержать несколько пулов с разными приоритетами.
+        Creates a new profile for the specified mining algorithm. A profile
+        can contain multiple pools with different priorities.
 
         Args:
-            body: Тело запроса с названием и алгоритмом профиля.
+            body: Request body with profile name and algorithm.
 
         Returns:
-            MRRResponse[ProfileCreateResponse] — ответ с ID созданного профиля:
-            - При успехе: MRRResponse(success=True, data=ProfileCreateResponse)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[ProfileCreateResponse] — response with created profile ID:
+            - On success: MRRResponse(success=True, data=ProfileCreateResponse)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = ProfileCreateBody(name="My Scrypt Profile", algo="scrypt")
@@ -265,18 +265,18 @@ class AccountClient(BaseSubClient):
         return result
 
     async def get_profile(self, pid: int) -> MRRResponse[Profile]:
-        """Получает конкретный профиль пула по ID.
+        """Retrieves a specific pool profile by ID.
 
-        Возвращает детальную информацию о профиле, включая список пулов
-        с их приоритетами и настройками подключения.
+        Returns detailed information about a profile, including the list of pools
+        with their priorities and connection settings.
 
         Args:
-            pid: Идентификатор профиля.
+            pid: Profile identifier.
 
         Returns:
-            MRRResponse[Profile] — ответ с информацией о профиле:
-            - При успехе: MRRResponse(success=True, data=Profile)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[Profile] — response with profile information:
+            - On success: MRRResponse(success=True, data=Profile)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.get_profile(pid=40073)
@@ -302,21 +302,21 @@ class AccountClient(BaseSubClient):
         return result
 
     async def update_profile(self, pid: int, poolid: int, priority: int | None = None) -> MRRResponse[None]:
-        """Добавляет или заменяет пул в профиле.
+        """Adds or replaces a pool in a profile.
 
-        Добавляет пул в профиль с указанным приоритетом или заменяет
-        существующий пул на этом приоритете.
+        Adds a pool to a profile with the specified priority or replaces
+        an existing pool at that priority.
 
         Args:
-            pid: Идентификатор профиля.
-            poolid: Идентификатор пула для добавления.
-            priority: Приоритет пула (0-4). Если не указан, пул добавляется
-                     на первый доступный приоритет.
+            pid: Profile identifier.
+            poolid: Pool ID to add.
+            priority: Pool priority (0-4). If not specified, the pool is added
+                     to the first available priority.
 
         Returns:
-            MRRResponse[None] — ответ о результате:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response with result:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.update_profile(pid=40073, poolid=98708, priority=0)
@@ -343,20 +343,20 @@ class AccountClient(BaseSubClient):
         return result
 
     async def update_profile_priority(self, pid: int, priority: int, poolid: int) -> MRRResponse[None]:
-        """Добавляет пул на конкретную позицию приоритета.
+        """Adds a pool to a specific priority position.
 
-        Добавляет пул в профиль на указанную позицию приоритета (0-4).
-        Пулы на более низких приоритетах имеют большее значение.
+        Adds a pool to a profile at the specified priority position (0-4).
+        Pools at lower priority numbers have higher precedence.
 
         Args:
-            pid: Идентификатор профиля.
-            priority: Приоритет пула (0-4).
-            poolid: Идентификатор пула для добавления.
+            pid: Profile identifier.
+            priority: Pool priority (0-4).
+            poolid: Pool ID to add.
 
         Returns:
-            MRRResponse[None] — ответ о результате:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response with result:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.update_profile_priority(pid=41818, priority=0, poolid=98708)
@@ -380,18 +380,18 @@ class AccountClient(BaseSubClient):
         return result
 
     async def delete_profile(self, pid: int) -> MRRResponse[ProfileDeleteResponse]:
-        """Удаляет профиль пула.
+        """Deletes a pool profile.
 
-        Удаляет профиль пула по ID. Все пулы, связанные с профилем,
-        также будут удалены из профиля.
+        Deletes a pool profile by ID. All pools associated with the profile
+        will also be removed from the profile.
 
         Args:
-            pid: Идентификатор профиля для удаления.
+            pid: Profile identifier to delete.
 
         Returns:
-            MRRResponse[ProfileDeleteResponse] — ответ о результате удаления:
-            - При успехе: MRRResponse(success=True, data=ProfileDeleteResponse)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[ProfileDeleteResponse] — response with deletion result:
+            - On success: MRRResponse(success=True, data=ProfileDeleteResponse)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.delete_profile(pid=42281)
@@ -415,15 +415,15 @@ class AccountClient(BaseSubClient):
         return result
 
     async def get_pools(self) -> MRRResponse[list[Pool]]:
-        """Получает список сохранённых пулов.
+        """Retrieves the list of saved pools.
 
-        Возвращает все сохранённые пулы аккаунта с полной информацией
-        о подключении и настройках.
+        Returns all saved account pools with full connection
+        information and settings.
 
         Returns:
-            MRRResponse[list[Pool]] — ответ со списком пулов:
-            - При успехе: MRRResponse(success=True, data=[Pool, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[Pool]] — response with pool list:
+            - On success: MRRResponse(success=True, data=[Pool, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.get_pools()
@@ -448,18 +448,18 @@ class AccountClient(BaseSubClient):
         return result
 
     async def get_pools_by_ids(self, ids: list[int]) -> MRRResponse[list[Pool]]:
-        """Получает конкретные пулы по ID.
+        """Retrieves specific pools by ID.
 
-        Возвращает информацию о сохранённых пулах по списку их идентификаторов.
-        Пулы разделяются точкой с запятой в URL.
+        Returns information about saved pools by their identifiers.
+        Pools are separated by semicolons in the URL.
 
         Args:
-            ids: Список идентификаторов пулов.
+            ids: List of pool identifiers.
 
         Returns:
-            MRRResponse[list[Pool]] — ответ со списком пулов:
-            - При успехе: MRRResponse(success=True, data=[Pool, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[Pool]] — response with pool list:
+            - On success: MRRResponse(success=True, data=[Pool, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.get_pools_by_ids(ids=[12345, 12346])
@@ -485,18 +485,18 @@ class AccountClient(BaseSubClient):
         return result
 
     async def create_pool(self, body: PoolCreateBody) -> MRRResponse[PoolCreateResponse]:
-        """Создаёт сохранённый пул.
+        """Creates a saved pool.
 
-        Создаёт новый сохранённый пул с указанными параметрами подключения.
-        Сохранённые пулы можно использовать в профилях и арендах.
+        Creates a new saved pool with the specified connection parameters.
+        Saved pools can be used in profiles and rentals.
 
         Args:
-            body: Тело запроса с параметрами пула.
+            body: Request body with pool parameters.
 
         Returns:
-            MRRResponse[PoolCreateResponse] — ответ с ID созданного пула:
-            - При успехе: MRRResponse(success=True, data=PoolCreateResponse)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[PoolCreateResponse] — response with created pool ID:
+            - On success: MRRResponse(success=True, data=PoolCreateResponse)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = PoolCreateBody(
@@ -530,19 +530,19 @@ class AccountClient(BaseSubClient):
         return result
 
     async def update_pools(self, ids: list[int], body: dict[str, Any]) -> MRRResponse[None]:
-        """Обновляет сохранённые пулы.
+        """Updates saved pools.
 
-        Обновляет параметры существующих пулов по списку их идентификаторов.
-        Можно обновить название, хост, порт, пользователя или пароль.
+        Updates parameters of existing pools by their identifiers.
+        You can update name, host, port, user, or password.
 
         Args:
-            ids: Список идентификаторов пулов для обновления.
-            body: Тело запроса с новыми параметрами пулов.
+            ids: List of pool identifiers to update.
+            body: Request body with new pool parameters.
 
         Returns:
-            MRRResponse[None] — ответ о результате:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response with result:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> body = {"name": "Updated Pool Name", "host": "new.pool.com"}
@@ -567,17 +567,17 @@ class AccountClient(BaseSubClient):
         return result
 
     async def delete_pools(self, ids: list[int]) -> MRRResponse[None]:
-        """Удаляет сохранённые пулы.
+        """Deletes saved pools.
 
-        Удаляет сохранённые пулы по списку их идентификаторов.
+        Deletes saved pools by their identifiers.
 
         Args:
-            ids: Список идентификаторов пулов для удаления.
+            ids: List of pool identifiers to delete.
 
         Returns:
-            MRRResponse[None] — ответ о результате:
-            - При успехе: MRRResponse(success=True, data=None)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[None] — response with result:
+            - On success: MRRResponse(success=True, data=None)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.delete_pools(ids=[12345, 12346])
@@ -600,29 +600,29 @@ class AccountClient(BaseSubClient):
         return result
 
     async def test_pool(self, body: PoolTestBody) -> MRRResponse[PoolTestResult]:
-        """Тестирует подключение к пулу.
+        """Tests pool connection.
 
-        Проверяет совместимость пула с MRR через тест подключения с разных
-        серверов. Поддерживает простой тест (только подключение) и полный
-        тест (с аутентификацией и получением работы).
+        Checks pool compatibility with MRR via connection test from different
+        servers. Supports simple test (connection only) and full
+        test (with authentication and work reception).
 
         Args:
-            body: Тело запроса с параметрами теста.
+            body: Request body with test parameters.
 
         Returns:
-            MRRResponse[PoolTestResult] — ответ с результатами тестов:
-            - При успехе: MRRResponse(success=True, data=PoolTestResult)
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[PoolTestResult] — response with test results:
+            - On success: MRRResponse(success=True, data=PoolTestResult)
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
-            # Простой тест
+            # Simple test
             >>> body = PoolTestBody(method="simple", host="de.minexmr.com:4444")
             >>> response = await account_client.test_pool(body)
             >>> if response.success:
             ...     for item in response.data.result:
             ...         print(f"{item.source} -> {item.dest}: {item.connection}")
 
-            # Полный тест
+            # Full test
             >>> body = PoolTestBody(
             ...     method="full",
             ...     type="cryptonote",
@@ -655,15 +655,15 @@ class AccountClient(BaseSubClient):
         return result
 
     async def get_currencies(self) -> MRRResponse[list[CurrencyStatus]]:
-        """Получает список валют с статусом для аккаунта.
+        """Retrieves the list of currencies with status for the account.
 
-        Возвращает информацию о доступных валютах для платежей и их статусе
-        включённости для аккаунта пользователя.
+        Returns information about available currencies for payments and their
+        enabled status for the user's account.
 
         Returns:
-            MRRResponse[list[CurrencyStatus]] — ответ со списком валют:
-            - При успехе: MRRResponse(success=True, data=[CurrencyStatus, ...])
-            - При ошибке: MRRResponse(success=False, error=...)
+            MRRResponse[list[CurrencyStatus]] — response with currency list:
+            - On success: MRRResponse(success=True, data=[CurrencyStatus, ...])
+            - On error: MRRResponse(success=False, error=...)
 
         Example:
             >>> response = await account_client.get_currencies()
@@ -676,7 +676,7 @@ class AccountClient(BaseSubClient):
         result = await self._http.request(method="GET", endpoint=endpoint)
 
         if result.success and result.data is not None:
-            # Ответ имеет структуру {"currencies": [...]}
+            # Response has structure {"currencies": [...]}
             currencies_data: dict[str, list[dict[str, Any]]] = result.data
             currencies_list = currencies_data.get("currencies", [])
             currencies = [CurrencyStatus.model_validate(c) for c in currencies_list]

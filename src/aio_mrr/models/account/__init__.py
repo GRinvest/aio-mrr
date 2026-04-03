@@ -1,6 +1,6 @@
-"""Модели для Account API.
+"""Models for Account API.
 
-Этот модуль содержит модели для эндпоинтов /account/*:
+This module contains models for /account/* endpoints:
 - GET /account
 - GET /account/balance
 - GET /account/transactions
@@ -18,8 +18,8 @@
 - PUT /account/pool/test
 - GET /account/currencies
 
-> ⚠️ PUT /account/balance (вывод средств) — эндпоинт отключён на стороне MRR.
-  НЕ реализован.
+> Note: PUT /account/balance (withdrawal) — endpoint is disabled on the MRR side.
+  NOT implemented.
 """
 
 from aio_mrr.models.account.request import (

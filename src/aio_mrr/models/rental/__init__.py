@@ -1,7 +1,7 @@
-"""Модели для Rental API.
+"""Models for Rental API.
 
-Этот пакет содержит Pydantic-модели для валидации request/response данных
-для эндпоинтов аренды (rental/*).
+This package contains Pydantic models for validating request/response data
+for rental endpoints (rental/*).
 """
 
 from aio_mrr.models.rental.request import (

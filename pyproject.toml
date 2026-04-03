@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aio-mrr"
-version = "0.1.1"
-description = "Асинхронная библиотека для MiningRigRentals API v2"
+version = "0.2.0"
+description = "Async library for MiningRigRentals API v2"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"
@@ -47,6 +47,10 @@ dev = [
     "pytest-asyncio>=0.26.0",
     "aioresponses>=0.7.0",
 ]
+docs = [
+    "mkdocs-material>=9.5.0",
+    "mkdocs-static-i18n>=1.2.0",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/aio_mrr"]
@@ -58,10 +62,7 @@ line-length = 120
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "RUF"]
 ignore = [
-    "RUF001",  # Русский язык в строках содержит кириллические символы (ambiguous)
-    "RUF002",  # Русский язык в docstring содержит кириллические символы
-    "RUF003",  # Русский язык в комментариях содержит кириллические символы (ambiguous)
-    "UP046",   # Pydantic Generic модели требуют старый синтаксис Generic[T]
+    "UP046",   # Pydantic Generic models require old Generic[T] syntax
 ]
 
 [tool.ruff.lint.per-file-ignores]

@@ -1,6 +1,6 @@
-"""Request модели для Info API.
+"""Request models for Info API.
 
-Этот модуль содержит модели для query параметров запросов к Info API.
+This module contains models for query parameters of requests to the Info API.
 """
 
 from pydantic import Field
@@ -9,10 +9,10 @@ from aio_mrr.models.base import BaseMRRModel
 
 
 class InfoAlgosQueryParams(BaseMRRModel):
-    """Query параметры для GET /info/algos.
+    """Query parameters for GET /info/algos.
 
     Attributes:
-        currency: Валюта для цен (BTC, LTC, ETH, DOGE, BCH). По умолчанию BTC.
+        currency: Currency for prices (BTC, LTC, ETH, DOGE, BCH). Default BTC.
     """
 
-    currency: str | None = Field(default=None, description="Валюта для цен")
+    currency: str | None = Field(default=None, description="Currency for prices")

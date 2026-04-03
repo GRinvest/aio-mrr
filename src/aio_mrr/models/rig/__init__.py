@@ -1,6 +1,6 @@
-"""Модели для Rig API.
+"""Models for Rig API.
 
-Этот пакет содержит Pydantic-модели для валидации request/response данных Rig API.
+This package contains Pydantic models for validating request/response data of the Rig API.
 """
 
 from aio_mrr.models.rig.request import (
