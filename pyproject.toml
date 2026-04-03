@@ -13,15 +13,24 @@ authors = [
     { name = "GRinvest", email = "info@sibneuro.tech" },
     { name = "SibNeuroTech", email = "info@sibneuro.tech" },
 ]
-keywords = ["mining", "miningrigrentals", "api", "async", "aiohttp"]
+maintainers = [
+    { name = "GRinvest", email = "info@sibneuro.tech" },
+]
+keywords = ["mining", "miningrigrentals", "api", "async", "aiohttp", "cryptocurrency", "blockchain"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
+urls = { Homepage = "https://github.com/GRinvest/aio-mrr", Documentation = "https://GRinvest.github.io/aio-mrr/", Repository = "https://github.com/GRinvest/aio-mrr.git", Issues = "https://github.com/GRinvest/aio-mrr/issues" }
 
 dependencies = [
     "aiohttp>=3.13.0,<4.0.0",
