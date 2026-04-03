@@ -786,11 +786,14 @@ async def get_rig_ports(
 - **При успехе:** `MRRResponse(success=True, data=RigPortInfo)`
 - **При ошибке:** `MRRResponse(success=False, error=...)`
 
-Поле `RigPortInfo`:
+Поля `RigPortInfo`:
 
 | Поле | Тип | Описание |
 |------|-----|----------|
+| `rigid` | `str \| None` | ID рига. |
 | `port` | `int` | Номер порта. |
+| `server` | `str \| None` | Имя сервера. |
+| `worker` | `str \| None` | Имя worker для подключения. |
 
 ### Пример использования
 
@@ -802,7 +805,10 @@ async def get_rig_port():
         response = await client.rig.get_rig_ports(ids=[12345])
         
         if response.success:
+            print(f"Риг: {response.data.rigid}")
             print(f"Порт: {response.data.port}")
+            print(f"Сервер: {response.data.server}")
+            print(f"Worker: {response.data.worker}")
         else:
             print(f"Ошибка: {response.error}")
 ```
@@ -833,7 +839,7 @@ async def get_rig_threads(
 
 ### Возвращаемое значение
 
-`MRRResponse[list[RigThreadInfo]]` — ответ со списком threads:
+`MRRResponse[list[RigThreadInfo]]` — ответ со списком групп rig-threads:
 
 - **При успехе:** `MRRResponse(success=True, data=[RigThreadInfo, ...])`
 - **При ошибке:** `MRRResponse(success=False, error=...)`
@@ -842,10 +848,17 @@ async def get_rig_threads(
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `id` | `int` | ID треда. |
-| `rig_id` | `int` | ID рига. |
-| `worker` | `str` | Имя worker. |
-| `status` | `str` | Статус треда. |
+| `rigid` | `str \| None` | ID рига. |
+| `access` | `str \| None` | Уровень доступа (owner/renter). |
+| `threads` | `list[RigThreadDetail]` | Список деталей thread'ов. |
+
+Поля `RigThreadDetail`:
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| `id` | `int \| None` | ID треда. |
+| `worker` | `str \| None` | Имя worker. |
+| `status` | `str \| None` | Статус треда. |
 | `hashrate` | `float \| None` | Хешрейт. |
 | `last_share` | `str \| None` | Время последней шары. |
 
@@ -859,8 +872,10 @@ async def get_rig_threads():
         response = await client.rig.get_rig_threads(ids=[12345])
         
         if response.success:
-            for thread in response.data:
-                print(f"{thread.worker}: {thread.status} - {thread.hashrate}")
+            for group in response.data:
+                print(f"Риг: {group.rigid}, Доступ: {group.access}")
+                for thread in group.threads:
+                    print(f"  {thread.worker}: {thread.status} - {thread.hashrate}")
         else:
             print(f"Ошибка: {response.error}")
 ```
@@ -904,17 +919,18 @@ async def get_rig_graph(
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `hashrate_data` | `list[RigGraphDataPoint] \| None` | Данные о хешрейте. |
-| `downtime_data` | `list[RigGraphDataPoint] \| None` | Данные о простоях. |
-| `hours` | `float \| None` | Часы данных. |
+| `rigid` | `str \| None` | ID рига. |
+| `chartdata` | `dict \| None` | Данные графика (time_start, time_end, timestamp_start, timestamp_end, bars). |
 
-Поля `RigGraphDataPoint`:
+Поле `chartdata` содержит:
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `time` | `str` | Время точки. |
-| `hashrate` | `float \| None` | Хешрейт в точке. |
-| `downtime` | `bool \| None` | Признак простоя. |
+| `time_start` | `str` | Время начала графика. |
+| `time_end` | `str` | Время окончания графика. |
+| `timestamp_start` | `str` | Unix timestamp начала. |
+| `timestamp_end` | `int` | Unix timestamp окончания. |
+| `bars` | `str` | Данные графика в формате `"[ts,val],[ts,val],..."`. |
 
 ### Пример использования
 
@@ -926,8 +942,13 @@ async def get_rig_graph():
         response = await client.rig.get_rig_graph(ids=[12345], hours=24)
         
         if response.success:
-            print(f"Часов данных: {response.data.hours}")
-            print(f"Точек хешрейта: {len(response.data.hashrate_data or [])}")
+            data = response.data.chartdata
+            if data:
+                print(f"Начало: {data['time_start']}")
+                print(f"Конец: {data['time_end']}")
+                bars = data.get('bars', '')
+                bar_count = bars.count('],[') + 1 if bars else 0
+                print(f"Точек данных: {bar_count}")
         else:
             print(f"Ошибка: {response.error}")
 ```

@@ -98,7 +98,7 @@ class HTTPClient:
         max_retries: Максимальное количество попыток retry (дефолт: 3).
     """
 
-    BASE_URL: str = "https://www.miningrigrentals.com"
+    BASE_URL: str = "https://www.miningrigrentals.com/api/v2"
 
     def __init__(
         self,
@@ -193,6 +193,7 @@ class HTTPClient:
                 return await self._do_request(
                     method=method,
                     url=full_url,
+                    endpoint=endpoint,
                     params=params,
                     body=body,
                     timeout=timeout,
@@ -242,6 +243,7 @@ class HTTPClient:
         self,
         method: str,
         url: str,
+        endpoint: str,
         params: dict[str, Any] | None,
         body: dict[str, Any] | None,
         timeout: aiohttp.ClientTimeout,
@@ -260,8 +262,8 @@ class HTTPClient:
         Returns:
             aiohttp.ClientResponse — для проверки статуса и retry логики.
         """
-        # Генерируем заголовки аутентификации
-        auth_headers = await self._auth_signer.get_auth_headers(endpoint=url)
+        # Генерируем заголовки аутентификации (подписываем только endpoint без base URL)
+        auth_headers = await self._auth_signer.get_auth_headers(endpoint=endpoint)
 
         # Объединяем заголовки
         headers = {

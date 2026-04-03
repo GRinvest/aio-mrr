@@ -11,13 +11,13 @@ from aio_mrr.models.rig.request import (
 )
 from aio_mrr.models.rig.response import (
     RigGraphData,
-    RigGraphDataPoint,
     RigHashInfo,
     RigInfo,
     RigList,
     RigPortInfo,
     RigPriceInfo,
     RigThreadInfo,
+    RigThreadDetail,
 )
 
 
@@ -314,6 +314,18 @@ class TestRigPortInfo:
         port_info = RigPortInfo(port=443)
 
         assert port_info.port == 443
+        assert port_info.rigid is None
+
+    def test_port_info_full(self) -> None:
+        """Тестирует полную информацию о порте."""
+        port_info = RigPortInfo(
+            rigid="207563", port=51874, server="eu-de02.miningrigrentals.com", worker="KnsMiner.207563"
+        )
+
+        assert port_info.port == 51874
+        assert port_info.rigid == "207563"
+        assert port_info.server == "eu-de02.miningrigrentals.com"
+        assert port_info.worker == "KnsMiner.207563"
 
 
 class TestRigThreadInfo:
@@ -321,53 +333,38 @@ class TestRigThreadInfo:
 
     def test_thread_info_minimal(self) -> None:
         """Тестирует минимальную информацию о thread."""
-        thread = RigThreadInfo(id=1, rig_id=12345, worker="worker1", status="active")
+        thread = RigThreadInfo(rigid="207563", access="owner", threads=[])
 
-        assert thread.id == 1
-        assert thread.rig_id == 12345
-        assert thread.worker == "worker1"
-        assert thread.status == "active"
-        assert thread.hashrate is None
+        assert thread.rigid == "207563"
+        assert thread.access == "owner"
+        assert thread.threads == []
 
     def test_thread_info_full(self) -> None:
         """Тестирует полную информацию о thread."""
-        thread = RigThreadInfo(
-            id=2,
-            rig_id=12345,
-            worker="worker2",
-            status="active",
-            hashrate=250.0,
-            last_share="2024-01-01T12:00:00Z",
+        detail = RigThreadDetail(id=1, worker="worker1", status="active", hashrate=250.0)
+        thread = RigThreadInfo(rigid="207563", access="owner", threads=[detail])
+
+        assert len(thread.threads) == 1
+        assert thread.threads[0].worker == "worker1"
+        assert thread.threads[0].hashrate == 250.0
+
+
+class TestRigThreadDetail:
+    """Тесты для модели RigThreadDetail."""
+
+    def test_detail_minimal(self) -> None:
+        """Тестирует минимальные детали thread."""
+        detail = RigThreadDetail()
+        assert detail.id is None
+        assert detail.worker is None
+
+    def test_detail_full(self) -> None:
+        """Тестирует полные детали thread."""
+        detail = RigThreadDetail(
+            id=2, worker="worker2", status="active", hashrate=500.0, last_share="2024-01-01T12:00:00Z"
         )
-
-        assert thread.hashrate == 250.0
-        assert thread.last_share == "2024-01-01T12:00:00Z"
-
-
-class TestRigGraphDataPoint:
-    """Тесты для модели RigGraphDataPoint."""
-
-    def test_graph_data_point_minimal(self) -> None:
-        """Тестирует минимальную точку данных."""
-        point = RigGraphDataPoint(time="2024-01-01T12:00:00Z")
-
-        assert point.time == "2024-01-01T12:00:00Z"
-        assert point.hashrate is None
-        assert point.downtime is None
-
-    def test_graph_data_point_with_hashrate(self) -> None:
-        """Тестирует точку данных с хешрейтом."""
-        point = RigGraphDataPoint(time="2024-01-01T12:00:00Z", hashrate=500.0, downtime=False)
-
-        assert point.hashrate == 500.0
-        assert point.downtime is False
-
-    def test_graph_data_point_downtime(self) -> None:
-        """Тестирует точку данных о простое."""
-        point = RigGraphDataPoint(time="2024-01-01T13:00:00Z", downtime=True)
-
-        assert point.downtime is True
-        assert point.hashrate is None
+        assert detail.hashrate == 500.0
+        assert detail.last_share == "2024-01-01T12:00:00Z"
 
 
 class TestRigGraphData:
@@ -377,22 +374,18 @@ class TestRigGraphData:
         """Тестирует минимальные графические данные."""
         graph_data = RigGraphData()
 
-        assert graph_data.hashrate_data is None
-        assert graph_data.downtime_data is None
-        assert graph_data.hours is None
+        assert graph_data.rigid is None
+        assert graph_data.chartdata is None
 
     def test_graph_data_full(self) -> None:
         """Тестирует полные графические данные."""
-        hashrate_data = [
-            RigGraphDataPoint(time="2024-01-01T12:00:00Z", hashrate=500.0),
-            RigGraphDataPoint(time="2024-01-01T13:00:00Z", hashrate=498.5),
-        ]
-        downtime_data = [RigGraphDataPoint(time="2024-01-01T14:00:00Z", downtime=True)]
+        chartdata = {
+            "time_start": "2024-01-01 12:00:00",
+            "time_end": "2024-01-02 12:00:00",
+            "bars": "[1704110400000,500],[1704110460000,498]",
+        }
+        graph_data = RigGraphData(rigid="207563", chartdata=chartdata)
 
-        graph_data = RigGraphData(hashrate_data=hashrate_data, downtime_data=downtime_data, hours=24.0)
-
-        assert graph_data.hashrate_data is not None
-        assert graph_data.downtime_data is not None
-        assert len(graph_data.hashrate_data) == 2
-        assert len(graph_data.downtime_data) == 1
-        assert graph_data.hours == 24.0
+        assert graph_data.rigid == "207563"
+        assert graph_data.chartdata is not None
+        assert graph_data.chartdata["time_start"] == "2024-01-01 12:00:00"

@@ -32,7 +32,7 @@ async def get_list() -> MRRResponse[list[RigGroupInfo]]
   - При ошибке: `MRRResponse(success=False, error=...)`
 
 **Что содержит `RigGroupInfo`:**
-- `id` — идентификатор группы (строка)
+- `id` — идентификатор группы (`str`)
 - `name` — название группы
 - `enabled` — флаг включения группы (`True`/`False`)
 - `rental_limit` — лимит активных аренд
@@ -80,7 +80,7 @@ async def get_by_id(id: int) -> MRRResponse[RigGroupInfo]
   - При ошибке: `MRRResponse(success=False, error=...)`
 
 **Что содержит `RigGroupInfo`:**
-- `id` — идентификатор группы (строка)
+- `id` — идентификатор группы (`str`)
 - `name` — название группы
 - `enabled` — флаг включения группы
 - `rental_limit` — лимит активных аренд

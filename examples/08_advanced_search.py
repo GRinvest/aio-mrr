@@ -113,19 +113,18 @@ async def main() -> None:
             else:
                 graph_data = graph_response.data
                 if graph_data:
-                    hours = graph_data.hours or "не указано"
-                    print(f"График за {hours} часов")
-                    if graph_data.hashrate_data:
-                        print(f"Точек данных: {len(graph_data.hashrate_data)}")
-                        # Показываем последние 3 точки
-                        for point in graph_data.hashrate_data[-3:]:
-                            time_val = point.time or "не указано"
-                            hashrate_val = point.hashrate or 0
-                            print(f"  Время: {time_val}, Хешрейт: {hashrate_val}")
-                    if graph_data.downtime_data:
-                        downtime_points = [p for p in graph_data.downtime_data if p.downtime]
-                        if downtime_points:
-                            print(f"Периодов простоя: {len(downtime_points)}")
+                    rigid = graph_data.rigid or "не указано"
+                    print(f"График для rig: {rigid}")
+                    if graph_data.chartdata:
+                        chartdata = graph_data.chartdata
+                        time_start = chartdata.get("time_start", "не указано")
+                        time_end = chartdata.get("time_end", "не указано")
+                        bars = chartdata.get("bars", "")
+                        print(f"  Начало: {time_start}")
+                        print(f"  Конец: {time_end}")
+                        # bars — это строка с данными в формате "[ts,val],[ts,val],..."
+                        bar_count = bars.count("],[") + 1 if bars else 0
+                        print(f"  Точек данных: {bar_count}")
         else:
             print("Пропуск получения графика (нет ID ригов)")
 
@@ -145,15 +144,15 @@ async def main() -> None:
             else:
                 threads = threads_response.data
                 if threads:
-                    print(f"Активных тредов: {len(threads)}")
-                    for thread in threads[:5]:  # Показываем первые 5
-                        print(f"\n  Риг ID: {thread.rig_id}")
-                        print(f"    Worker: {thread.worker}")
-                        print(f"    Статус: {thread.status}")
-                        if thread.hashrate:
-                            print(f"    Хешрейт: {thread.hashrate}")
-                        if thread.last_share:
-                            print(f"    Последняя шара: {thread.last_share}")
+                    print(f"Групп ригов с тредами: {len(threads)}")
+                    for thread_group in threads[:5]:  # Показываем первые 5
+                        print(f"\n  Риг ID: {thread_group.rigid}")
+                        print(f"    Доступ: {thread_group.access}")
+                        print(f"    Тредов: {len(thread_group.threads)}")
+                        for detail in thread_group.threads[:3]:  # Первые 3 треда
+                            print(f"      Worker: {detail.worker or 'N/A'}, Статус: {detail.status or 'N/A'}")
+                            if detail.hashrate:
+                                print(f"      Хешрейт: {detail.hashrate}")
                 else:
                     print("Активные треды отсутствуют")
         else:
@@ -175,7 +174,10 @@ async def main() -> None:
             else:
                 port_info = ports_response.data
                 if port_info:
+                    print(f"Риг ID: {port_info.rigid or 'N/A'}")
                     print(f"Порт сервера: {port_info.port}")
+                    print(f"Сервер: {port_info.server or 'N/A'}")
+                    print(f"Worker: {port_info.worker or 'N/A'}")
                     print("Используйте этот порт для подключения стратума")
         else:
             print("Пропуск получения информации о портах (нет ID ригов)")

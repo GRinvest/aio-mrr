@@ -3,7 +3,9 @@
 Этот модуль содержит модели для ответов от Rig API.
 """
 
-from pydantic import Field
+from typing import Any
+
+from pydantic import Field, field_validator
 
 from aio_mrr.models.base import BaseMRRModel
 
@@ -23,7 +25,17 @@ class RigPriceInfo(BaseMRRModel):
     price: float | None = None
     autoprice: bool | None = None
     minimum: float | None = None
-    modifier: str | None = None
+    modifier: float | str | None = None
+
+    @field_validator("modifier", mode="before")
+    @classmethod
+    def parse_modifier(cls, v: Any) -> float | str | None:
+        if v is None:
+            return None
+        try:
+            return float(v)
+        except (ValueError, TypeError):
+            return v
 
 
 class RigHashInfo(BaseMRRModel):
@@ -73,8 +85,8 @@ class RigInfo(BaseMRRModel):
     name: str
     description: str | None = None
     server: str | None = None
-    status: str | None = None
-    price: dict[str, RigPriceInfo] | None = None
+    status: dict[str, Any] | str | None = None
+    price: dict[str, Any] | None = None
     price_type: str | None = Field(default=None, alias="price.type")
     minhours: float | None = None
     maxhours: float | None = None
@@ -87,8 +99,18 @@ class RigInfo(BaseMRRModel):
     online: bool | None = None
     rented: bool | None = None
     last_hashrate: float | None = None
-    rpi: int | None = None
+    rpi: float | None = None
     owner: str | None = None
+
+    @field_validator("rpi", "suggested_diff", "last_hashrate", mode="before")
+    @classmethod
+    def parse_float_or_none(cls, v: Any) -> float | None:
+        if v is None or v == "":
+            return None
+        try:
+            return float(v)
+        except (ValueError, TypeError):
+            return None
 
 
 class RigList(BaseMRRModel):
@@ -110,46 +132,50 @@ class RigPortInfo(BaseMRRModel):
     Ответ для GET /rig/{ids}/port.
 
     Attributes:
+        rigid: ID rig.
         port: Прямой номер порта для подключения к серверу.
+        server: Имя сервера.
+        worker: Имя worker для подключения.
     """
 
-    port: int = Field(..., description="Прямой номер порта")
+    rigid: str | None = None
+    port: int
+    server: str | None = None
+    worker: str | None = None
 
 
-class RigThreadInfo(BaseMRRModel):
-    """Информация о thread'ах для rig.
-
-    Используется для ответа GET /rig/{ids}/threads.
+class RigThreadDetail(BaseMRRModel):
+    """Детали одного thread'а.
 
     Attributes:
         id: Идентификатор thread.
-        rig_id: ID rig.
         worker: Имя worker.
         status: Статус thread.
         hashrate: Текущий хешрейт.
         last_share: Время последней работы.
     """
 
-    id: int
-    rig_id: int
-    worker: str
-    status: str
+    id: int | None = None
+    worker: str | None = None
+    status: str | None = None
     hashrate: float | None = None
     last_share: str | None = None
 
 
-class RigGraphDataPoint(BaseMRRModel):
-    """Точка данных на графике rig.
+class RigThreadInfo(BaseMRRModel):
+    """Информация о thread'ах для rig.
+
+    Ответ для GET /rig/{ids}/threads — возвращает список rig-групп с threads.
 
     Attributes:
-        time: Timestamp.
-        hashrate: Хешрейт в точке.
-        downtime: Флаг простоя.
+        rigid: ID rig.
+        access: Уровень доступа (owner/renter).
+        threads: Список деталей thread'ов.
     """
 
-    time: str
-    hashrate: float | None = None
-    downtime: bool | None = None
+    rigid: str | None = None
+    access: str | None = None
+    threads: list[RigThreadDetail] = []
 
 
 class RigGraphData(BaseMRRModel):
@@ -158,11 +184,9 @@ class RigGraphData(BaseMRRModel):
     Ответ для GET /rig/{ids}/graph.
 
     Attributes:
-        hashrate_data: История хешрейта.
-        downtime_data: История простоев.
-        hours: Количество часов данных.
+        rigid: ID rig.
+        chartdata: Данные графика (time_start, time_end, timestamp_start, timestamp_end, bars).
     """
 
-    hashrate_data: list[RigGraphDataPoint] | None = None
-    downtime_data: list[RigGraphDataPoint] | None = None
-    hours: float | None = None
+    rigid: str | None = None
+    chartdata: dict[str, Any] | None = None

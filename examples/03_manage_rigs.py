@@ -52,7 +52,13 @@ async def main() -> None:
         if mining_rigs:
             print(f"\nНайдено ригов: {len(mining_rigs)}")
             for rig in mining_rigs:
-                print(f"  ID: {rig.id}, Имя: {rig.name}, Статус: {rig.status}")
+                # rig.status can be str or dict, handle both cases
+                status_display = (
+                    rig.status
+                    if isinstance(rig.status, str)
+                    else (rig.status.get("status") if isinstance(rig.status, dict) else "N/A")
+                )
+                print(f"  ID: {rig.id}, Имя: {rig.name}, Статус: {status_display}")
         else:
             print("Ваши риги отсутствуют")
 
@@ -71,8 +77,14 @@ async def main() -> None:
             if rigs_by_id:
                 print(f"\nПолучено {len(rigs_by_id)} ригов по ID:")
                 for rig in rigs_by_id:
+                    # rig.status can be str or dict, handle both cases
+                    status_display = (
+                        rig.status
+                        if isinstance(rig.status, str)
+                        else (rig.status.get("status") if isinstance(rig.status, dict) else "N/A")
+                    )
                     print(f"  ID: {rig.id}, Имя: {rig.name}")
-                    print(f"    Сервер: {rig.server}, Статус: {rig.status}")
+                    print(f"    Сервер: {rig.server}, Статус: {status_display}")
                     if rig.hash:
                         print(f"    Хешрейт: {rig.hash.hash} {rig.hash.type}")
         else:

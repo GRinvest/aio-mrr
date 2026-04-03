@@ -83,8 +83,12 @@ class RentalClient(BaseSubClient):
         result = await self._http.request(method="GET", endpoint=endpoint, params=query_params)
 
         if result.success and result.data is not None:
-            rentals_data: list[dict[str, Any]] = result.data
-            rentals = [RentalInfo.model_validate(r) for r in rentals_data]
+            rentals_data = result.data
+            if isinstance(rentals_data, dict):
+                rentals_list = rentals_data.get("rentals", [])
+            else:
+                rentals_list = rentals_data
+            rentals = [RentalInfo.model_validate(r) for r in rentals_list]
             return MRRResponse(
                 success=True,
                 data=rentals,

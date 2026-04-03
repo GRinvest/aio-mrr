@@ -72,8 +72,10 @@ async def main() -> None:
                     f"    Рекомендуемая цена: {profile.algo.suggested_price.amount} "
                     f"{profile.algo.suggested_price.currency}"
                 )
-                print(f"    Пулов в профиле: {len(profile.pools)}")
-                for pool in profile.pools:
+                # pools can be None now
+                pools = profile.pools or []
+                print(f"    Пулов в профиле: {len(pools)}")
+                for pool in pools:
                     print(f"      - {pool.type}://{pool.host}:{pool.port} (приоритет: {pool.priority})")
         else:
             print("Профили отсутствуют")
@@ -122,8 +124,10 @@ async def main() -> None:
                         f"{profile_info.algo.suggested_price.currency} "
                         f"за {profile_info.algo.suggested_price.unit}"
                     )
-                    print(f"Пулов в профиле: {len(profile_info.pools)}")
-                    for pool in profile_info.pools:
+                    # pools can be None now
+                    pools = profile_info.pools or []
+                    print(f"Пулов в профиле: {len(pools)}")
+                    for pool in pools:
                         print(f"  - {pool.type}://{pool.host}:{pool.port}")
                         print(f"    User: {pool.user}, Priority: {pool.priority}")
                         print(f"    Статус: {pool.status}")

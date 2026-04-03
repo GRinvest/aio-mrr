@@ -114,7 +114,7 @@ async def main() -> None:
 
             rental: RentalInfo = response.data
             print(f"Аренда ID: {rental.id}")
-            print(f"Риг ID: {rental.rig_id}")
+            print(f"Риг ID: {rental.rig_id or 'N/A'}")
             print(f"Риг имя: {rental.rig_name or 'N/A'}")
             print(f"Статус: {rental.status}")
             print(f"Начало: {rental.started}")

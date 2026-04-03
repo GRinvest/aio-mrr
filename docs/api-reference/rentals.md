@@ -419,14 +419,14 @@ async def get_graph(ids: list[int], hours: float | None = None, interval: str | 
   - При ошибке: `MRRResponse(success=False, error=...)`
 
 **Что содержит `GraphData`:**
-- `hashrate_data` — список точек данных хешрейта (`list[GraphDataPoint]`)
-- `downtime_data` — список точек данных простоев (`list[GraphDataPoint]`)
-- `hours` — количество часов данных
+- `hashrate_data` — список точек данных хешрейта (`list[GraphDataPoint] | None`)
+- `downtime_data` — список точек данных простоев (`list[GraphDataPoint] | None`)
+- `hours` — количество часов данных (`float | None`)
 
 **Что содержит `GraphDataPoint`:**
-- `time` — временная метка
-- `hashrate` — значение хешрейта
-- `downtime` — статус простоя
+- `time` — временная метка (`str | None`)
+- `hashrate` — значение хешрейта (`float | None`)
+- `downtime` — статус простоя (`bool | None`)
 
 **Пример использования:**
 ```python

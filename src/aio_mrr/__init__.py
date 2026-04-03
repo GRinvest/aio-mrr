@@ -80,7 +80,6 @@ from aio_mrr.models import (
     RigCreateBody,
     RigExtendBody,
     RigGraphData,
-    RigGraphDataPoint,
     RigGroupCreateBody,
     RigGroupInfo,
     RigGroupList,
@@ -157,7 +156,6 @@ __all__ = [
     "RigCreateBody",
     "RigExtendBody",
     "RigGraphData",
-    "RigGraphDataPoint",
     "RigGroupCreateBody",
     # RigGroup models
     "RigGroupInfo",

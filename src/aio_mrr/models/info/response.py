@@ -6,10 +6,18 @@
 - CurrencyInfo — ответ для GET /info/currencies
 """
 
+from typing import Any
+
+from pydantic import field_validator
 
 from aio_mrr.models.base import BaseMRRModel
 
-# --- Sub-models для AlgoInfo ---
+
+def _parse_float_or_none(value: Any) -> float | None:
+    """Parse float value, returning None for empty strings."""
+    if value == "" or value is None:
+        return None
+    return float(value)
 
 
 class HashInfo(BaseMRRModel):
@@ -21,9 +29,14 @@ class HashInfo(BaseMRRModel):
         nice: Человекочитаемое представление (например, "882.70G").
     """
 
-    hash: float
+    hash: float | None = None
     unit: str
     nice: str
+
+    @field_validator("hash", mode="before")
+    @classmethod
+    def parse_hash(cls, v: Any) -> float | None:
+        return _parse_float_or_none(v)
 
 
 class PriceInfo(BaseMRRModel):

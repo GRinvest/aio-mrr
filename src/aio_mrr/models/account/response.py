@@ -114,7 +114,7 @@ class BalanceInfo(BaseMRRModel):
     """
 
     confirmed: str
-    pending: float
+    pending: float = 0
     unconfirmed: str
 
 
@@ -143,12 +143,12 @@ class Transaction(BaseMRRModel):
     id: str
     type: str
     currency: str | None = None  # Опциональное поле — документация противоречива
-    amount: str
+    amount: str | float
     when: str
     rental: str | None = None
     rig: str | None = None
     txid: str | None = None
-    txfee: str | None = None
+    txfee: str | float | None = None
     payout_address: str | None = None
     sent: str | None = None
     status: str
@@ -248,7 +248,7 @@ class Profile(BaseMRRModel):
     id: str
     name: str
     algo: AlgoProfileInfo
-    pools: list[PoolProfileInfo]
+    pools: list[PoolProfileInfo] | None = None
 
 
 # --- Sub-models для PoolTestResult ---

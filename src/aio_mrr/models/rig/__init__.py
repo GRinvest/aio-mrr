@@ -12,12 +12,12 @@ from aio_mrr.models.rig.request import (
 )
 from aio_mrr.models.rig.response import (
     RigGraphData,
-    RigGraphDataPoint,
     RigHashInfo,
     RigInfo,
     RigList,
     RigPortInfo,
     RigPriceInfo,
+    RigThreadDetail,
     RigThreadInfo,
 )
 
@@ -26,7 +26,6 @@ __all__ = [
     "RigCreateBody",
     "RigExtendBody",
     "RigGraphData",
-    "RigGraphDataPoint",
     "RigHashInfo",
     "RigInfo",
     "RigList",
@@ -34,5 +33,6 @@ __all__ = [
     "RigPortInfo",
     "RigPriceInfo",
     "RigSearchParams",
+    "RigThreadDetail",
     "RigThreadInfo",
 ]

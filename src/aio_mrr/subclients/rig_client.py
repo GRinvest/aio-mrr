@@ -175,8 +175,12 @@ class RigClient(BaseSubClient):
         result = await self._http.request(method="GET", endpoint=endpoint, params=params)
 
         if result.success and result.data is not None:
-            rigs_data: list[dict[str, Any]] = result.data
-            rigs = [RigInfo.model_validate(r) for r in rigs_data]
+            rigs_data = result.data
+            if isinstance(rigs_data, dict):
+                rigs_list = rigs_data.get("records", [])
+            else:
+                rigs_list = rigs_data
+            rigs = [RigInfo.model_validate(r) for r in rigs_list]
             return MRRResponse(
                 success=True,
                 data=rigs,

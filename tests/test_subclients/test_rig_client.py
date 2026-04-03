@@ -477,8 +477,14 @@ class TestRigClientGetRigThreads:
         response_data = {
             "success": True,
             "data": [
-                {"id": 1, "rig_id": 12345, "worker": "worker1", "status": "accepted", "hashrate": 500.0},
-                {"id": 2, "rig_id": 12345, "worker": "worker2", "status": "accepted", "hashrate": 500.0},
+                {
+                    "rigid": "12345",
+                    "access": "owner",
+                    "threads": [
+                        {"id": 1, "worker": "worker1", "status": "accepted", "hashrate": 500.0},
+                        {"id": 2, "worker": "worker2", "status": "accepted", "hashrate": 500.0},
+                    ],
+                },
             ],
         }
 
@@ -493,8 +499,10 @@ class TestRigClientGetRigThreads:
 
             assert result.success is True
             assert result.data is not None
-            assert len(result.data) == 2
-            assert result.data[0].worker == "worker1"
+            assert len(result.data) == 1
+            assert result.data[0].rigid == "12345"
+            assert len(result.data[0].threads) == 2
+            assert result.data[0].threads[0].worker == "worker1"
 
 
 class TestRigClientGetRigGraph:
@@ -509,9 +517,12 @@ class TestRigClientGetRigGraph:
         response_data = {
             "success": True,
             "data": {
-                "hours": 24,
-                "hashrate_data": [{"time": "1234567890", "hashrate": 500.0}],
-                "downtime_data": [],
+                "rigid": "12345",
+                "chartdata": {
+                    "time_start": "2024-01-01 12:00:00",
+                    "time_end": "2024-01-02 12:00:00",
+                    "bars": "[1704110400000,500]",
+                },
             },
         }
 
@@ -526,5 +537,6 @@ class TestRigClientGetRigGraph:
 
             assert result.success is True
             assert result.data is not None
-            assert result.data.hours == 24
-            assert len(result.data.hashrate_data or []) == 1
+            assert result.data.rigid == "12345"
+            assert result.data.chartdata is not None
+            assert result.data.chartdata["time_start"] == "2024-01-01 12:00:00"

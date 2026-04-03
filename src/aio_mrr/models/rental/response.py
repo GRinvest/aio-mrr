@@ -70,7 +70,7 @@ class RentalInfo(BaseMRRModel):
     """
 
     id: str = Field(..., description="Идентификатор аренды")
-    rig_id: str = Field(..., alias="rig_id", description="ID rig")
+    rig_id: str | None = Field(default=None, alias="rig_id", description="ID rig")
     rig_name: str | None = Field(default=None, description="Название rig")
     owner: str | None = Field(default=None, description="Имя владельца rig")
     renter: str | None = Field(default=None, description="Имя арендатора")

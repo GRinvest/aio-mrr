@@ -140,7 +140,7 @@ class BaseMRRModel(BaseModel):
 | `id` | `str` | ID профиля |
 | `name` | `str` | Название профиля |
 | `algo` | `AlgoProfileInfo` | Информация об алгоритме профиля |
-| `pools` | `list[PoolProfileInfo]` | Список пулов в профиле |
+| `pools` | `list[PoolProfileInfo] \| None` | Список пулов в профиле (опционально) |
 
 ---
 
@@ -565,7 +565,7 @@ class BaseMRRModel(BaseModel):
 | Поле | Тип | Описание |
 |------|-----|----------|
 | `id` | `str` | ID аренды |
-| `rig_id` | `str` | ID рига (alias: `rig_id`) |
+| `rig_id` | `str \| None` | ID рига (опционально) |
 | `rig_name` | `str \| None` | Название рига |
 | `owner` | `str \| None` | Владелец рига |
 | `renter` | `str \| None` | Арендатор |
@@ -703,7 +703,7 @@ class BaseMRRModel(BaseModel):
 | `name` | `str` | Название рига |
 | `description` | `str \| None` | Описание рига |
 | `server` | `str \| None` | Сервер рига |
-| `status` | `str \| None` | Статус рига |
+| `status` | `dict[str, Any] \| str \| None` | Статус рига (может быть строкой или словарем) |
 | `price` | `dict[str, RigPriceInfo] \| None` | Информация о цене (по валютам) |
 | `price_type` | `str \| None` | Тип цены (alias: `price.type`) |
 | `minhours` | `float \| None` | Минимальное время аренды |
@@ -728,20 +728,34 @@ class BaseMRRModel(BaseModel):
 
 | Поле | Тип | Описание |
 |------|-----|----------|
+| `rigid` | `str \| None` | ID рига (опционально) |
 | `port` | `int` | Порт сервера |
+| `server` | `str \| None` | Имя сервера (опционально) |
+| `worker` | `str \| None` | Имя worker для подключения (опционально) |
 
 ---
 
 ### RigThreadInfo
 
-Информация о рабочем треде рига.
+Информация о рабочих тредах рига (группировка по ригам).
+
+Ответ для GET /rig/{ids}/threads возвращает список групп ригов с их тредами.
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `id` | `int` | ID треда |
-| `rig_id` | `int` | ID рига |
-| `worker` | `str` | Название воркера |
-| `status` | `str` | Статус треда |
+| `rigid` | `str \| None` | ID рига |
+| `access` | `str \| None` | Уровень доступа (owner/renter) |
+| `threads` | `list[RigThreadDetail]` | Список деталей тредов |
+
+### RigThreadDetail
+
+Детали одного треда рига.
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| `id` | `int \| None` | ID треда |
+| `worker` | `str \| None` | Название воркера |
+| `status` | `str \| None` | Статус треда |
 | `hashrate` | `float \| None` | Хешрейт треда |
 | `last_share` | `str \| None` | Время последней shares |
 
@@ -751,11 +765,22 @@ class BaseMRRModel(BaseModel):
 
 Данные графика хешрейта рига.
 
+Ответ для GET /rig/{ids}/graph возвращает данные в новом формате с chartdata.
+
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `hashrate_data` | `list[RigGraphDataPoint] \| None` | Данные по хешрейту |
-| `downtime_data` | `list[RigGraphDataPoint] \| None` | Данные по простоям |
-| `hours` | `float \| None` | Количество часов |
+| `rigid` | `str \| None` | ID рига |
+| `chartdata` | `dict[str, Any] \| None` | Данные графика (time_start, time_end, timestamp_start, timestamp_end, bars) |
+
+**Структура `chartdata`:**
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| `time_start` | `str` | Начало временного диапазона |
+| `time_end` | `str` | Конец временного диапазона |
+| `timestamp_start` | `int` | Timestamp начала |
+| `timestamp_end` | `int` | Timestamp конца |
+| `bars` | `str` | Данные в формате "[ts,val],[ts,val],..." |
 
 ---
 
