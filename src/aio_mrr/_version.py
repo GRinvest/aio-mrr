@@ -2,4 +2,4 @@
 
 from typing import Literal
 
-__version__: Literal["0.1.0"] = "0.1.0"
+__version__: Literal["0.1.1"] = "0.1.1"

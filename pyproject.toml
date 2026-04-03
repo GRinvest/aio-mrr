@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aio-mrr"
-version = "0.1.0"
+version = "0.1.1"
 description = "Асинхронная библиотека для MiningRigRentals API v2"
 readme = "README.md"
 license = "MIT"
